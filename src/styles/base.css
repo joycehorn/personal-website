@@ -176,3 +176,98 @@ a:hover {
     scroll-behavior: auto !important;
   }
 }
+
+/* Print Stylesheet: Clean 2-3 page CV view */
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: letter;
+  }
+
+  :root {
+    --paper: #ffffff !important;
+    --ink: #000000 !important;
+    --muted: #333333 !important;
+    --rule: #cccccc !important;
+    --rule-subtle: #eeeeee !important;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10.5pt !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Hide interactive and screen-only chrome */
+  header,
+  .language-banner,
+  .theme-toggle,
+  .lang-switch-btn,
+  .skip-link,
+  .hero-actions,
+  .mini-timeline-strip,
+  .desktop-timeline-island,
+  .timeline-view-controls,
+  .conductor-canvas-wrap,
+  .pub-controls-bar,
+  .btn-copy-citation,
+  .no-pubs-msg,
+  .footer-meta {
+    display: none !important;
+  }
+
+  /* Force display of semantic server-rendered list view */
+  #timeline-list-view,
+  .timeline-list-view-block {
+    display: block !important;
+  }
+
+  /* Flatten layout */
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .section-grid {
+    display: block !important;
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+    border-top: 1px solid #cccccc !important;
+  }
+
+  .section-label {
+    font-size: 10pt !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+    color: #000000 !important;
+  }
+
+  .section-content,
+  .reading-column {
+    max-width: 100% !important;
+  }
+
+  /* Avoid awkward page break splits */
+  article,
+  .pub-card,
+  .project-entry,
+  .timeline-lane-group,
+  .theme-card {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  h1, h2, h3, h4 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+    color: #000000 !important;
+  }
+
+  a {
+    color: #000000 !important;
+    text-decoration: none !important;
+  }
+}
+

@@ -1,10 +1,17 @@
 ---
 import '@fontsource-variable/newsreader/standard.css';
-import '@fontsource/ibm-plex-sans/400.css';
-import '@fontsource/ibm-plex-sans/500.css';
-import '@fontsource/ibm-plex-sans/600.css';
-import '@fontsource/ibm-plex-mono/400.css';
-import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-sans/latin-400.css';
+import '@fontsource/ibm-plex-sans/latin-ext-400.css';
+import '@fontsource/ibm-plex-sans/latin-500.css';
+import '@fontsource/ibm-plex-sans/latin-ext-500.css';
+import '@fontsource/ibm-plex-sans/latin-600.css';
+import '@fontsource/ibm-plex-sans/latin-ext-600.css';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import '@fontsource/ibm-plex-mono/latin-ext-400.css';
+import '@fontsource/ibm-plex-mono/latin-500.css';
+import '@fontsource/ibm-plex-mono/latin-ext-500.css';
+import newsreaderWoff2 from '@fontsource-variable/newsreader/files/newsreader-latin-standard-normal.woff2?url';
+import ibmSansWoff2 from '@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url';
 import '../styles/base.css';
 
 import type { Locale } from '../lib/types';
@@ -89,6 +96,10 @@ const skipLinkText = locale === 'pt' ? 'Pular para o conteúdo principal' : 'Ski
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+    <!-- Font preloads for critical path -->
+    <link rel="preload" href={newsreaderWoff2} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={ibmSansWoff2} as="font" type="font/woff2" crossorigin />
+
     <!-- Canonical & Alternates -->
     <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" hreflang="en" href={enUrl} />
@@ -102,9 +113,15 @@ const skipLinkText = locale === 'pt' ? 'Pular para o conteúdo principal' : 'Ski
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content={locale === 'pt' ? 'pt_BR' : 'en_US'} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={new URL(locale === 'pt' ? '/pt/og.png' : '/og.png', siteUrl).toString()} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${content.meta.name} — ${pageDesc}`} />
+
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDesc} />
+    <meta name="twitter:image" content={new URL(locale === 'pt' ? '/pt/og.png' : '/og.png', siteUrl).toString()} />
 
     <!-- Structured Data -->
     <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />

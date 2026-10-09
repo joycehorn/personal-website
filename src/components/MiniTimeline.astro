@@ -10,9 +10,11 @@ import {
 
 interface Props {
   locale: Locale;
+  emptyPlayhead?: boolean;
+  href?: string;
 }
 
-const { locale } = Astro.props;
+const { locale, emptyPlayhead = false, href = '#timeline' } = Astro.props;
 const content = loadContent();
 const dataset = buildTimelineDataset(content.timeline, content.publications, locale);
 const lanes = content.lanes;
@@ -27,7 +29,7 @@ const currentYearDecimal = now.getFullYear() + (now.getMonth() + 0.5) / 12;
 const nowX = yearToX(currentYearDecimal, SVG_WIDTH);
 ---
 
-<a href="#timeline" class="mini-timeline-strip" aria-label="Jump to interactive career timeline (2002 to 2027)">
+<a href={href} class="mini-timeline-strip" aria-label="2002 to 2027: career timeline">
   <div class="mini-timeline-inner">
     <div class="mini-timeline-dates" aria-hidden="true">
       <span>2002</span>
@@ -106,15 +108,17 @@ const nowX = yearToX(currentYearDecimal, SVG_WIDTH);
       })}
 
       <!-- Current date vertical indicator -->
-      <line
-        x1={nowX}
-        y1="4"
-        x2={nowX}
-        y2={SVG_HEIGHT - 2}
-        stroke="var(--ink)"
-        stroke-width="1.5"
-        stroke-dasharray="2,2"
-      />
+      {!emptyPlayhead && (
+        <line
+          x1={nowX}
+          y1="4"
+          x2={nowX}
+          y2={SVG_HEIGHT - 2}
+          stroke="var(--ink)"
+          stroke-width="1.5"
+          stroke-dasharray="2,2"
+        />
+      )}
     </svg>
   </div>
 </a>

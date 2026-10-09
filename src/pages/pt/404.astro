@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import MiniTimeline from '../../components/MiniTimeline.astro';
 import { getUi } from '../../lib/content';
 
 const locale = 'pt';
@@ -7,46 +8,65 @@ const title = getUi('not_found_title', locale);
 const linkText = getUi('not_found_link', locale);
 ---
 
-<Base locale={locale} currentPath="/pt/404" title="404">
+<Base locale={locale} currentPath="/pt/404" title="404 — Página não encontrada">
   <div class="container not-found-container">
-    <div class="not-found-box">
-      <span class="error-code">404</span>
-      <h1 class="error-title">{title}</h1>
-      <a href="/pt/" class="error-link">← {linkText}</a>
+    <div class="section-grid">
+      <div class="section-label">
+        404
+      </div>
+
+      <div class="section-content not-found-content">
+        <h1 class="error-title">{title}</h1>
+
+        <div class="not-found-timeline">
+          <MiniTimeline locale={locale} emptyPlayhead={true} href="/pt/" />
+        </div>
+
+        <div class="error-action">
+          <a href="/pt/" class="error-link">← {linkText}</a>
+        </div>
+      </div>
     </div>
   </div>
 </Base>
 
 <style>
   .not-found-container {
-    padding: 8rem var(--gutter);
+    padding-top: 2rem;
+    padding-bottom: 8rem;
   }
 
-  .not-found-box {
-    max-width: 50ch;
-  }
-
-  .error-code {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono);
-    color: var(--lane-research);
-    display: block;
-    margin-bottom: 0.5rem;
+  .not-found-content {
+    max-width: var(--col-reading);
   }
 
   .error-title {
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    line-height: 1.15;
+    margin-bottom: 2rem;
     font-weight: 400;
+  }
+
+  .not-found-timeline {
+    margin-bottom: 2.5rem;
+  }
+
+  .error-action {
+    margin-top: 2rem;
   }
 
   .error-link {
     font-family: var(--font-mono);
     font-size: var(--text-mono);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
+    color: var(--ink);
     text-decoration: underline;
     text-underline-offset: 4px;
+    transition: color var(--transition-fast);
+  }
+
+  .error-link:hover {
+    color: var(--lane-research);
   }
 </style>
