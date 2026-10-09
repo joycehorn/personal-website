@@ -1,44 +1,44 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { loadContent, getUi } from '../../lib/content';
+import PubList from '../../components/PubList.astro';
+import { getUi } from '../../lib/content';
 
-const content = loadContent();
 const locale = 'pt';
 const navPubs = getUi('nav_publications', locale);
 ---
 
 <Base locale={locale} currentPath="/pt/publicacoes" title={navPubs}>
-  <div class="container shell-content">
-    <div class="shell-hero">
-      <h1 class="shell-title">{navPubs}</h1>
-      <div class="shell-notice">
-        <code>[Phase 1 Shell: Publicações em Português]</code>
+  <div class="container pub-container">
+    <div class="section-grid">
+      <div class="section-label">
+        {navPubs}
+      </div>
+
+      <div class="section-content">
+        <header class="pub-header-block">
+          <h1 class="pub-page-title">{navPubs}</h1>
+        </header>
+
+        <PubList locale={locale} />
       </div>
     </div>
   </div>
 </Base>
 
 <style>
-  .shell-content {
-    padding: 6rem var(--gutter);
+  .pub-container {
+    padding-top: 1rem;
+    padding-bottom: 6rem;
   }
 
-  .shell-hero {
-    max-width: 65ch;
+  .pub-header-block {
+    margin-bottom: 2.5rem;
   }
 
-  .shell-title {
-    font-size: clamp(2.5rem, 6vw, 4rem);
+  .pub-page-title {
+    font-size: clamp(2.5rem, 5vw, 3.75rem);
     line-height: 1.1;
-    margin-bottom: 1.5rem;
     font-weight: 400;
-  }
-
-  .shell-notice {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono);
-    color: var(--lane-publications);
-    border-left: 2px solid var(--lane-publications);
-    padding-left: 1rem;
+    color: var(--ink);
   }
 </style>

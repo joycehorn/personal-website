@@ -1,0 +1,870 @@
+---
+import type { Locale, Publication, PublicationType } from '../lib/types';
+import { loadContent, getUi, getTagLabel, t } from '../lib/content';
+import Chip from './Chip.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = loadContent();
+const publications = content.publications;
+
+const underReviewLabel = getUi('under_review', locale);
+const copyCitationLabel = getUi('copy_citation', locale);
+const copiedLabel = getUi('copied', locale);
+const firstAuthorLabel = getUi('first_author_only', locale);
+const allLabel = getUi('all_lanes', locale);
+
+// Collect all unique tags used across publications
+const allTags = Array.from(new Set(publications.flatMap((p) => p.tags || []))).sort();
+
+// Helper to generate APA citation string
+function buildApaCitation(pub: Publication): string {
+  const authors = pub.authors;
+  const year = pub.year;
+  const title = pub.title;
+  const venue = pub.venue;
+  const link = pub.doi ? `https://doi.org/${pub.doi}` : (pub.url || '');
+
+  if (pub.type === 'under_review') {
+    return `${authors} (${year}). ${title}. ${venue}.${link ? ` ${link}` : ''}`;
+  }
+  return `${authors} (${year}). ${title}. ${venue}.${link ? ` ${link}` : ''}`;
+}
+
+// Separate under review from published
+const underReviewPubs = publications.filter((p) => p.type === 'under_review');
+const publishedPubs = publications.filter((p) => p.type !== 'under_review');
+
+// Group published by year descending
+const years = Array.from(new Set(publishedPubs.map((p) => p.year))).sort((a, b) => b - a);
+const pubsByYear = years.map((year) => ({
+  year,
+  items: publishedPubs.filter((p) => p.year === year),
+}));
+---
+
+<div class="pub-page-wrap" id="publications-app">
+  <!-- Controls bar: Types, First-Author toggle, Tags, and Live Count -->
+  <div class="pub-controls-bar">
+    <div class="primary-controls">
+      <div class="filter-group type-filters" role="toolbar" aria-label="Filter publication types">
+        <button type="button" class="pub-filter-btn active" data-type="all" aria-pressed="true">
+          {allLabel}
+        </button>
+        <button type="button" class="pub-filter-btn" data-type="under_review" aria-pressed="false">
+          {underReviewLabel}
+        </button>
+        <button type="button" class="pub-filter-btn" data-type="journal" aria-pressed="false">
+          {getUi('journal', locale)}
+        </button>
+        <button type="button" class="pub-filter-btn" data-type="conference" aria-pressed="false">
+          {getUi('conference', locale)}
+        </button>
+        <button type="button" class="pub-filter-btn" data-type="workshop" aria-pressed="false">
+          {getUi('workshop', locale)}
+        </button>
+      </div>
+
+      <div class="filter-group secondary-filters">
+        <button
+          type="button"
+          id="toggle-first-author"
+          class="first-author-btn"
+          aria-pressed="false"
+        >
+          <span class="checkbox-indicator" aria-hidden="true"></span>
+          <span>{firstAuthorLabel}</span>
+        </button>
+      </div>
+
+      <div class="pub-count-badge" aria-live="polite">
+        <span id="pub-count-display">{publications.length}</span>
+        <span class="count-label">{locale === 'pt' ? 'publicações' : 'publications'}</span>
+      </div>
+    </div>
+
+    <!-- Tag Chips Filter Bar -->
+    <div class="tag-chips-wrapper" role="region" aria-label="Filter by topic tag">
+      <div class="tag-chips-list" id="tag-filters">
+        <button type="button" class="tag-chip-btn active" data-tag="all" aria-pressed="true">
+          <span class="chip-inner">{allLabel}</span>
+        </button>
+        {allTags.map((tag) => (
+          <button type="button" class="tag-chip-btn" data-tag={tag} aria-pressed="false">
+            <span class="chip-inner">{getTagLabel(tag, locale)}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state message -->
+  <div id="no-pubs-msg" class="no-pubs-msg" style="display: none;">
+    <p>{locale === 'pt' ? 'Nenhuma publicação encontrada para os filtros selecionados.' : 'No publications match the selected filters.'}</p>
+  </div>
+
+  <!-- Publications stream -->
+  <div class="pub-list-stream" id="pub-stream">
+    <!-- Under Review Section (at top, separated) -->
+    {underReviewPubs.length > 0 && (
+      <section class="pub-group pub-group-under-review" data-group="under_review">
+        <div class="group-header">
+          <span class="group-pip under-review-pip" aria-hidden="true"></span>
+          <h2 class="group-heading under-review-heading">{underReviewLabel}</h2>
+        </div>
+
+        <div class="group-items">
+          {underReviewPubs.map((pub) => {
+            const apaStr = buildApaCitation(pub);
+            const authorHtml = pub.authors.replace(
+              /Fonteles,\s*J\.H\./g,
+              '<strong>Fonteles, J.H.</strong>'
+            );
+            const showVenue = pub.venue && pub.venue.trim().toLowerCase() !== 'under review';
+
+            return (
+              <article
+                id={pub.id}
+                class="pub-card"
+                data-type={pub.type}
+                data-first-author={pub.first_author ? 'true' : 'false'}
+                data-tags={JSON.stringify(pub.tags)}
+                data-featured={pub.featured ? 'true' : 'false'}
+              >
+                <div class="pub-header">
+                  <div class="pub-meta">
+                    <span class="pub-badge under-review-badge">{underReviewLabel}</span>
+                    {showVenue && <span class="pub-venue">{pub.venue}</span>}
+                  </div>
+                  {pub.featured && (
+                    <span class="featured-indicator" title="Featured publication" aria-label="Featured">★</span>
+                  )}
+                </div>
+
+                <h3 class="pub-title">{pub.title}</h3>
+
+                <p class="pub-authors" set:html={authorHtml} />
+
+                <div class="pub-footer">
+                  <div class="pub-actions">
+                    <button
+                      type="button"
+                      class="btn-copy-citation"
+                      data-citation={apaStr}
+                      data-label-copy={copyCitationLabel}
+                      data-label-copied={copiedLabel}
+                      aria-label={`${copyCitationLabel}: ${pub.title}`}
+                    >
+                      <span class="btn-text">{copyCitationLabel}</span>
+                    </button>
+
+                    {pub.doi && (
+                      <a
+                        href={`https://doi.org/${pub.doi}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="pub-link doi-link"
+                      >
+                        doi:{pub.doi} ↗
+                      </a>
+                    )}
+                    {!pub.doi && pub.url && (
+                      <a
+                        href={pub.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="pub-link url-link"
+                      >
+                        Link ↗
+                      </a>
+                    )}
+                  </div>
+
+                  <div class="pub-chips">
+                    {pub.tags.map((tag) => (
+                      <button
+                        type="button"
+                        class="card-chip-btn"
+                        data-filter-tag={tag}
+                        title={`Filter: ${getTagLabel(tag, locale)}`}
+                      >
+                        <Chip tag={tag} locale={locale} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <!-- Published papers grouped by year descending -->
+    {pubsByYear.map(({ year, items }) => (
+      <section class="pub-group" data-year={year}>
+        <div class="group-header">
+          <span class="group-pip" aria-hidden="true"></span>
+          <h2 class="group-heading">{year}</h2>
+        </div>
+
+        <div class="group-items">
+          {items.map((pub) => {
+            const apaStr = buildApaCitation(pub);
+            const authorHtml = pub.authors.replace(
+              /Fonteles,\s*J\.H\./g,
+              '<strong>Fonteles, J.H.</strong>'
+            );
+            const award = pub.award ? t(pub.award, locale) : '';
+
+            return (
+              <article
+                id={pub.id}
+                class="pub-card"
+                data-type={pub.type}
+                data-first-author={pub.first_author ? 'true' : 'false'}
+                data-tags={JSON.stringify(pub.tags)}
+                data-featured={pub.featured ? 'true' : 'false'}
+              >
+                <div class="pub-header">
+                  <div class="pub-meta">
+                    <span class="pub-type-tag">{pub.type}</span>
+                    <span class="meta-sep">/</span>
+                    <span class="pub-venue">{pub.venue}</span>
+                  </div>
+                  {pub.featured && (
+                    <span class="featured-indicator" title="Featured publication" aria-label="Featured">★</span>
+                  )}
+                </div>
+
+                <h3 class="pub-title">{pub.title}</h3>
+
+                <p class="pub-authors" set:html={authorHtml} />
+
+                {award && (
+                  <div class="pub-award-banner">
+                    <span class="award-icon" aria-hidden="true">✦</span>
+                    <span class="award-text">{award}</span>
+                  </div>
+                )}
+
+                <div class="pub-footer">
+                  <div class="pub-actions">
+                    <button
+                      type="button"
+                      class="btn-copy-citation"
+                      data-citation={apaStr}
+                      data-label-copy={copyCitationLabel}
+                      data-label-copied={copiedLabel}
+                      aria-label={`${copyCitationLabel}: ${pub.title}`}
+                    >
+                      <span class="btn-text">{copyCitationLabel}</span>
+                    </button>
+
+                    {pub.doi && (
+                      <a
+                        href={`https://doi.org/${pub.doi}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="pub-link doi-link"
+                      >
+                        doi:{pub.doi} ↗
+                      </a>
+                    )}
+                    {!pub.doi && pub.url && (
+                      <a
+                        href={pub.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="pub-link url-link"
+                      >
+                        Link ↗
+                      </a>
+                    )}
+                  </div>
+
+                  <div class="pub-chips">
+                    {pub.tags.map((tag) => (
+                      <button
+                        type="button"
+                        class="card-chip-btn"
+                        data-filter-tag={tag}
+                        title={`Filter: ${getTagLabel(tag, locale)}`}
+                      >
+                        <Chip tag={tag} locale={locale} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    ))}
+  </div>
+</div>
+
+<script>
+  // Dynamic filtering and copy citation handlers
+  const app = document.getElementById('publications-app');
+  if (app) {
+    const typeButtons = app.querySelectorAll<HTMLButtonElement>('.pub-filter-btn');
+    const firstAuthorBtn = app.querySelector<HTMLButtonElement>('#toggle-first-author');
+    const tagButtons = app.querySelectorAll<HTMLButtonElement>('.tag-chip-btn');
+    const cardChipButtons = app.querySelectorAll<HTMLButtonElement>('.card-chip-btn');
+    const countDisplay = app.querySelector<HTMLElement>('#pub-count-display');
+    const pubCards = app.querySelectorAll<HTMLElement>('.pub-card');
+    const pubGroups = app.querySelectorAll<HTMLElement>('.pub-group');
+    const noPubsMsg = app.querySelector<HTMLElement>('#no-pubs-msg');
+
+    let activeType = 'all';
+    let firstAuthorOnly = false;
+    let activeTag = 'all';
+
+    function updateFilters() {
+      let visibleCount = 0;
+
+      pubCards.forEach((card) => {
+        const type = card.getAttribute('data-type');
+        const isFirst = card.getAttribute('data-first-author') === 'true';
+        const rawTags = card.getAttribute('data-tags') || '[]';
+        const tags = JSON.parse(rawTags);
+
+        const matchesType = activeType === 'all' || type === activeType;
+        const matchesAuthor = !firstAuthorOnly || isFirst;
+        const matchesTag = activeTag === 'all' || tags.includes(activeTag);
+
+        if (matchesType && matchesAuthor && matchesTag) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Show/hide year/group headers based on child visibility
+      pubGroups.forEach((group) => {
+        let anyVisibleInGroup = false;
+        group.querySelectorAll<HTMLElement>('.pub-card').forEach((c) => {
+          if (c.style.display !== 'none') anyVisibleInGroup = true;
+        });
+
+        group.style.display = anyVisibleInGroup ? 'block' : 'none';
+      });
+
+      if (countDisplay) {
+        countDisplay.textContent = `${visibleCount}`;
+      }
+
+      if (noPubsMsg) {
+        noPubsMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+      }
+
+      // Update active state on tag buttons
+      tagButtons.forEach((btn) => {
+        const tag = btn.getAttribute('data-tag');
+        const isActive = tag === activeTag;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    }
+
+    // Type filter clicks
+    typeButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        typeButtons.forEach((b) => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        activeType = btn.getAttribute('data-type') || 'all';
+        updateFilters();
+      });
+    });
+
+    // First author toggle
+    if (firstAuthorBtn) {
+      firstAuthorBtn.addEventListener('click', () => {
+        firstAuthorOnly = !firstAuthorOnly;
+        firstAuthorBtn.classList.toggle('active', firstAuthorOnly);
+        firstAuthorBtn.setAttribute('aria-pressed', firstAuthorOnly ? 'true' : 'false');
+        updateFilters();
+      });
+    }
+
+    // Tag chip button clicks in toolbar
+    tagButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tag = btn.getAttribute('data-tag') || 'all';
+        if (activeTag === tag && tag !== 'all') {
+          // Clicking active tag clears it
+          activeTag = 'all';
+        } else {
+          activeTag = tag;
+        }
+        updateFilters();
+      });
+    });
+
+    // Card chip button clicks
+    cardChipButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tag = btn.getAttribute('data-filter-tag') || 'all';
+        activeTag = activeTag === tag ? 'all' : tag;
+        updateFilters();
+
+        // Scroll to toolbar so user sees active state
+        const controls = app.querySelector('.pub-controls-bar');
+        if (controls) {
+          controls.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    });
+
+    // Copy citation button with clipboard API
+    app.querySelectorAll<HTMLButtonElement>('.btn-copy-citation').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const citation = btn.getAttribute('data-citation');
+        const labelCopy = btn.getAttribute('data-label-copy') || 'Copy citation';
+        const labelCopied = btn.getAttribute('data-label-copied') || 'Copied';
+        const textSpan = btn.querySelector('.btn-text');
+
+        if (citation) {
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              await navigator.clipboard.writeText(citation);
+            } else {
+              // Fallback for environments where clipboard API is restricted
+              const textarea = document.createElement('textarea');
+              textarea.value = citation;
+              textarea.style.position = 'fixed';
+              textarea.style.opacity = '0';
+              document.body.appendChild(textarea);
+              textarea.select();
+              document.execCommand('copy');
+              document.body.removeChild(textarea);
+            }
+
+            if (textSpan) textSpan.textContent = labelCopied;
+            btn.classList.add('copied');
+
+            setTimeout(() => {
+              if (textSpan) textSpan.textContent = labelCopy;
+              btn.classList.remove('copied');
+            }, 2000);
+          } catch (e) {
+            console.warn('Clipboard write failed:', e);
+          }
+        }
+      });
+    });
+  }
+</script>
+
+<style>
+  .pub-page-wrap {
+    width: 100%;
+  }
+
+  /* Controls toolbar */
+  .pub-controls-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    margin-bottom: 3.5rem;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 3.5rem;
+    background-color: var(--paper);
+    z-index: 30;
+  }
+
+  .primary-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pub-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .pub-filter-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .pub-filter-btn.active {
+    color: var(--ink);
+    border-color: var(--ink);
+    background: var(--rule-subtle);
+    font-weight: 500;
+  }
+
+  /* First author toggle */
+  .first-author-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .first-author-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .first-author-btn.active {
+    color: var(--ink);
+    border-color: var(--ink);
+    background: var(--rule-subtle);
+  }
+
+  .checkbox-indicator {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--muted);
+    border-radius: 1px;
+    background: transparent;
+  }
+
+  .first-author-btn.active .checkbox-indicator {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  /* Tag chips row */
+  .tag-chips-wrapper {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scrollbar-width: thin;
+  }
+
+  .tag-chips-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .tag-chip-btn {
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 0.15rem 0.45rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .tag-chip-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .tag-chip-btn.active {
+    color: var(--ink);
+    border-color: var(--ink);
+    background: var(--rule-subtle);
+    font-weight: 500;
+  }
+
+  /* Count badge */
+  .pub-count-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--muted);
+    white-space: nowrap;
+    margin-left: auto;
+  }
+
+  #pub-count-display {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* Empty state */
+  .no-pubs-msg {
+    padding: 3rem 0;
+    font-family: var(--font-body);
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Publications stream */
+  .pub-list-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 4.5rem;
+  }
+
+  .pub-group {
+    padding-bottom: 2rem;
+  }
+
+  .pub-group-under-review {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 3.5rem;
+  }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .group-pip {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--ink);
+  }
+
+  .under-review-pip {
+    background-color: var(--lane-research);
+  }
+
+  .group-heading {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .under-review-heading {
+    color: var(--lane-research);
+  }
+
+  /* Cards in group */
+  .group-items {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .pub-card {
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    scroll-margin-top: 8rem;
+    transition: background-color var(--transition-fast), padding-left var(--transition-fast);
+  }
+
+  .pub-card:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .pub-card:target {
+    background-color: var(--rule-subtle);
+    border-left: 3px solid var(--lane-research);
+    padding-left: 1rem;
+  }
+
+  .pub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.75rem;
+  }
+
+  .pub-meta {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--muted);
+  }
+
+  .pub-type-tag {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+
+  .under-review-badge {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--lane-research);
+    font-weight: 500;
+  }
+
+  .meta-sep {
+    color: var(--rule);
+  }
+
+  .featured-indicator {
+    color: var(--lane-honors);
+    font-size: 0.95rem;
+  }
+
+  .pub-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 1.8vw, 1.6rem);
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 0.85rem;
+    max-width: var(--col-reading);
+  }
+
+  .pub-authors {
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    max-width: var(--col-reading);
+  }
+
+  .pub-authors :global(strong) {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .pub-award-banner {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--lane-honors);
+    margin-bottom: 1.25rem;
+    padding: 0.25rem 0.55rem;
+    border: 1px solid var(--lane-honors);
+    border-radius: 2px;
+  }
+
+  .pub-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .pub-actions {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+  }
+
+  .btn-copy-citation {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 0.2rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-copy-citation:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .btn-copy-citation.copied {
+    color: var(--lane-research);
+    border-color: var(--lane-research);
+  }
+
+  .pub-link {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 3px;
+  }
+
+  .pub-link:hover {
+    text-decoration-color: var(--ink);
+  }
+
+  .pub-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .card-chip-btn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+  }
+
+  .card-chip-btn:hover :global(.annotation-chip) {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  @media (max-width: 640px) {
+    .primary-controls {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .pub-count-badge {
+      margin-left: 0;
+    }
+  }
+</style>
