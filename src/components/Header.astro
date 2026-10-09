@@ -1,0 +1,246 @@
+---
+import type { Locale } from '../lib/types';
+import { loadContent, getUi } from '../lib/content';
+
+interface Props {
+  locale: Locale;
+  currentPath: string;
+}
+
+const { locale, currentPath } = Astro.props;
+const content = loadContent();
+
+const homeHref = locale === 'pt' ? '/pt/' : '/';
+const pubsHref = locale === 'pt' ? '/pt/publicacoes' : '/publications';
+
+// Target equivalent URL for language switch
+let targetSwitchHref = '/';
+if (locale === 'en') {
+  targetSwitchHref = currentPath.startsWith('/publications') ? '/pt/publicacoes' : '/pt/';
+} else {
+  targetSwitchHref = currentPath.startsWith('/pt/publicacoes') ? '/publications' : '/';
+}
+
+const navAbout = getUi('nav_about', locale);
+const navResearch = getUi('nav_research', locale);
+const navTimeline = getUi('nav_timeline', locale);
+const navPublications = getUi('nav_publications', locale);
+const switchLangText = getUi('switch_lang', locale);
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href={homeHref} class="wordmark">
+      {content.meta.name}
+    </a>
+
+    <nav class="nav-menu" aria-label="Main Navigation">
+      <ul class="nav-list">
+        <li><a href={`${homeHref}#about`}>{navAbout}</a></li>
+        <li><a href={`${homeHref}#research`}>{navResearch}</a></li>
+        <li><a href={`${homeHref}#timeline`}>{navTimeline}</a></li>
+        <li><a href={pubsHref}>{navPublications}</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a href={targetSwitchHref} class="lang-switch" id="lang-switch" data-target={targetSwitchHref}>
+        <span class="lang-label">{switchLangText}</span>
+      </a>
+
+      <button
+        type="button"
+        id="theme-toggle"
+        class="theme-toggle"
+        aria-label="Toggle dark/light mode"
+        title="Toggle dark/light mode"
+      >
+        <svg class="sun-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Preserve URL hash when switching language
+  const langSwitch = document.getElementById('lang-switch') as HTMLAnchorElement | null;
+  if (langSwitch) {
+    langSwitch.addEventListener('click', (e) => {
+      const hash = window.location.hash;
+      if (hash) {
+        e.preventDefault();
+        const baseHref = langSwitch.getAttribute('data-target') || langSwitch.href;
+        window.location.href = baseHref + hash;
+      }
+    });
+  }
+
+  // Theme toggle with localStorage (wrapped in try/catch)
+  const themeToggle = document.getElementById('theme-toggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      try {
+        const root = document.documentElement;
+        const currentTheme = root.getAttribute('data-theme');
+        let newTheme: 'light' | 'dark';
+
+        if (currentTheme) {
+          newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        } else {
+          // If no attribute, check prefers-color-scheme
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          newTheme = prefersDark ? 'light' : 'dark';
+        }
+
+        root.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+      } catch (e) {
+        console.warn('Unable to access localStorage for theme:', e);
+      }
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--rule);
+    padding: 1.25rem 0;
+    background-color: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition: background-color var(--transition-normal), border-color var(--transition-normal);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .wordmark:hover {
+    text-decoration: none;
+    color: var(--muted);
+  }
+
+  .nav-menu {
+    display: flex;
+  }
+
+  .nav-list {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .nav-list a {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    color: var(--muted);
+    transition: color var(--transition-fast);
+  }
+
+  .nav-list a:hover {
+    color: var(--ink);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .lang-switch {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    text-decoration: none;
+    color: var(--ink);
+    background: transparent;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .lang-switch:hover {
+    border-color: var(--ink);
+    text-decoration: none;
+  }
+
+  .theme-toggle {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 0.3rem 0.45rem;
+    cursor: pointer;
+    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color var(--transition-fast);
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--ink);
+  }
+
+  /* Show/hide moon or sun icon depending on active theme */
+  .sun-icon {
+    display: none;
+  }
+  .moon-icon {
+    display: block;
+  }
+
+  :global([data-theme="dark"]) .sun-icon {
+    display: block;
+  }
+  :global([data-theme="dark"]) .moon-icon {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .sun-icon {
+      display: block;
+    }
+    :global(:root:not([data-theme="light"])) .moon-icon {
+      display: none;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .nav-menu {
+      display: none; /* In phase 1/mobile, keep header clean without cluttered overflow */
+    }
+  }
+</style>

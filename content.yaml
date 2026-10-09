@@ -1,0 +1,852 @@
+# =====================================================================
+# content.yaml — single source of truth for the website
+# Joyce Horn Fonteles
+#
+# RULES FOR THE CODING AGENT
+#  - Render ONLY what is in this file. Never invent or "improve" facts.
+#  - Fields named `en` / `pt` are translations of each other.
+#  - Plain strings (no en/pt split) are NOT translated: paper titles,
+#    author lists, venue names, DOIs, proper names, tool names.
+#  - Items with `hidden: true` must not be rendered.
+#  - Values "TODO" mean: render nothing for that field.
+# =====================================================================
+
+meta:
+  name: "Joyce Horn Fonteles"
+  domain: "joycehornfonteles.com"
+  email: "joyce@joycehornfonteles.com"    # public contact (personal domain, outlives the PhD)
+  email_academic: "joyce.h.fonteles@vanderbilt.edu"
+  location:
+    en: "Nashville, TN, USA"
+    pt: "Nashville, TN, EUA"
+  links:
+    scholar: "TODO"
+    github: "TODO"
+    linkedin: "https://www.linkedin.com/in/joyce-horn"
+    orcid: "TODO"
+  portrait: "/portrait.jpg"          # optional; if the file is absent, render no image and no placeholder
+
+headline:
+  en: "Multimodal AI and human–AI collaboration for understanding how people learn together."
+  pt: "IA multimodal e colaboração humano–IA para compreender como as pessoas aprendem juntas."
+
+now:
+  en: "PhD candidate in Computer Science, Vanderbilt University · Defending spring 2027 · Open to postdoctoral positions"
+  pt: "Doutoranda em Ciência da Computação, Vanderbilt University · Defesa prevista para o 1º semestre de 2027 · Aberta a posições de pós-doutorado"
+
+about:
+  en: |
+    I build AI systems that help people make sense of human interaction, systems that experts can inspect, correct, and come to trust.
+
+    I'm a Computer Science PhD candidate at Vanderbilt University, advised by Prof. Gautam Biswas, and a researcher in the NSF EngageAI Institute. My work combines large language models, computer vision, and speech analysis with human-in-the-loop annotation to interpret how students learn together in real classrooms: what they say, where they look, how they move. I design the analysis pipelines, the evaluation methods that tell us when an LLM's reading of a classroom can be relied on, and the interfaces that put those results in front of researchers and teachers.
+
+    Before research, I spent fifteen years in industry: architecting healthcare and fintech platforms, leading the engineering and database teams behind 60+ judicial systems in the Brazilian Amazon, and training the public servants who took those courts from paper to digital. That shapes how I do research. I care about data that holds up in production, and about tools that real people actually adopt.
+  pt: |
+    Desenvolvo sistemas de IA que ajudam a compreender a interação humana, sistemas que especialistas conseguem inspecionar e corrigir, e nos quais, com o tempo, aprendem a confiar.
+
+    Sou doutoranda em Ciência da Computação na Vanderbilt University, orientada pelo Prof. Gautam Biswas, e pesquisadora do NSF EngageAI Institute. Meu trabalho combina modelos de linguagem de grande escala (LLMs), visão computacional e análise de fala com anotação humana no ciclo (human-in-the-loop) para interpretar como estudantes aprendem juntos em salas de aula reais: o que dizem, para onde olham, como se movem. Projeto os pipelines de análise, os métodos de avaliação que indicam quando a leitura de um LLM sobre uma sala de aula é confiável e as interfaces que levam esses resultados a pesquisadores e professores.
+
+    Antes da pesquisa, passei quinze anos na indústria: arquitetando plataformas de saúde e do setor financeiro, liderando as equipes de desenvolvimento e de banco de dados por trás de mais de 60 sistemas do Tribunal de Justiça do Pará e capacitando os servidores que levaram esse tribunal do papel ao digital. Essa trajetória molda a forma como pesquiso: me importo com dados que se sustentam em produção e com ferramentas que pessoas reais de fato adotam.
+
+bridge:   # short block shown beside the Industry lane / "From production to research"
+  title:
+    en: "From production systems to research"
+    pt: "Dos sistemas em produção à pesquisa"
+  text:
+    en: "Fifteen years of shipping and running software (data infrastructure for 60+ court systems, healthcare and fintech platforms, and training hundreds of non-technical users) is why my research tools are built to be used, not just published."
+    pt: "Quinze anos entregando e mantendo software (infraestrutura de dados para mais de 60 sistemas judiciais, plataformas de saúde e do setor financeiro, e capacitação de centenas de usuários não técnicos) são o motivo de minhas ferramentas de pesquisa serem feitas para serem usadas, e não apenas publicadas."
+
+# ---------------------------------------------------------------------
+# Tags = "annotation chips". Key is internal; show the label in the
+# current language, mono, uppercase.
+# ---------------------------------------------------------------------
+tags:
+  MULTIMODAL_AI:        { en: "Multimodal AI",            pt: "IA multimodal" }
+  HUMAN_IN_THE_LOOP:    { en: "Human-in-the-loop",        pt: "Humano no ciclo" }
+  LLM_EVALUATION:       { en: "LLM evaluation",           pt: "Avaliação de LLMs" }
+  LLMS:                 { en: "LLMs",                     pt: "LLMs" }
+  XAI:                  { en: "Explainable AI",           pt: "IA explicável" }
+  LEARNING_ANALYTICS:   { en: "Learning analytics",       pt: "Learning analytics" }
+  HCI:                  { en: "HCI",                      pt: "IHC" }
+  VISUALIZATION:        { en: "Visualization",            pt: "Visualização" }
+  COMPUTER_VISION:      { en: "Computer vision",          pt: "Visão computacional" }
+  SPEECH:               { en: "Speech & audio",           pt: "Fala e áudio" }
+  EMBODIED_LEARNING:    { en: "Embodied learning",        pt: "Aprendizagem corporificada" }
+  COLLABORATION:        { en: "Collaborative learning",   pt: "Aprendizagem colaborativa" }
+  AGENTS:               { en: "AI agents",                pt: "Agentes de IA" }
+  DATA_INFRASTRUCTURE:  { en: "Data infrastructure",      pt: "Infraestrutura de dados" }
+  SOFTWARE_ENGINEERING: { en: "Software engineering",     pt: "Engenharia de software" }
+  LEADERSHIP:           { en: "Leadership",               pt: "Liderança" }
+  TEACHING:             { en: "Teaching & training",      pt: "Ensino e capacitação" }
+  MUSIC_COMPUTING:      { en: "Music computing",          pt: "Computação musical" }
+  GRAPHICS:             { en: "Computer graphics",        pt: "Computação gráfica" }
+  ACCESSIBILITY:        { en: "Accessibility",            pt: "Acessibilidade" }
+
+# ---------------------------------------------------------------------
+# Research themes — render IN THIS ORDER.
+# ---------------------------------------------------------------------
+research_themes:
+  - id: hitl
+    tag: HUMAN_IN_THE_LOOP
+    title:
+      en: "AI proposes, experts verify"
+      pt: "A IA propõe, especialistas verificam"
+    text:
+      en: "Pipelines where vision, audio, and language models surface candidate moments in classroom recordings, trained analysts confirm or correct them, and those corrections feed back into the models through active learning and chain-of-thought refinement."
+      pt: "Pipelines em que modelos de visão, áudio e linguagem identificam momentos candidatos em gravações de sala de aula, analistas treinados os confirmam ou corrigem, e essas correções retornam aos modelos por meio de aprendizado ativo e refinamento com chain-of-thought."
+  - id: llm-eval
+    tag: LLM_EVALUATION
+    title:
+      en: "Knowing when to trust an LLM's reading"
+      pt: "Saber quando confiar na leitura de um LLM"
+    text:
+      en: "Methods for evaluating LLMs as qualitative analysts of multimodal classroom data: where they agree with expert coders, where they diverge, and what that divergence tells us."
+      pt: "Métodos para avaliar LLMs como analistas qualitativos de dados multimodais de sala de aula: onde concordam com codificadores especialistas, onde divergem e o que essa divergência revela."
+  - id: interfaces
+    tag: XAI
+    title:
+      en: "Interfaces people can interrogate"
+      pt: "Interfaces que podem ser questionadas"
+    text:
+      en: "Visual tools, such as an AI-enhanced timeline of multimodal interactions, that place the evidence next to every AI judgment so researchers and teachers can validate it, override it, and learn from it."
+      pt: "Ferramentas visuais, como uma linha do tempo de interações multimodais aprimorada por IA, que colocam a evidência ao lado de cada julgamento da IA para que pesquisadores e professores possam validá-lo, contestá-lo e aprender com ele."
+  - id: multimodal
+    tag: MULTIMODAL_AI
+    title:
+      en: "Multimodal and embodied learning"
+      pt: "Aprendizagem multimodal e corporificada"
+    text:
+      en: "Late-fusion and agentic architectures that combine gaze, movement, speech, and gesture to recognize self- and socially-shared regulation of learning in embodied science and computing activities."
+      pt: "Arquiteturas de fusão tardia e agênticas que combinam olhar, movimento, fala e gestos para reconhecer a autorregulação e a regulação socialmente compartilhada da aprendizagem em atividades corporificadas de ciências e computação."
+
+# ---------------------------------------------------------------------
+# Projects
+# ---------------------------------------------------------------------
+projects:
+  - id: ai-timeline
+    featured: true
+    period: "2023 – present"
+    title:
+      en: "AI-enhanced timeline for multimodal interaction analysis"
+      pt: "Linha do tempo aprimorada por IA para análise de interações multimodais"
+    context: "NSF EngageAI Institute · Vanderbilt University"
+    summary:
+      en: "An interface that lays gaze, movement, speech, and AI-detected behaviors side by side on a shared timeline, so learning scientists can check what the models found against the video and correct it."
+      pt: "Uma interface que alinha olhar, movimento, fala e comportamentos detectados pela IA em uma linha do tempo compartilhada, para que pesquisadores da aprendizagem confiram o que os modelos encontraram em relação ao vídeo e o corrijam."
+    tags: [XAI, VISUALIZATION, HUMAN_IN_THE_LOOP, LEARNING_ANALYTICS]
+    publications: [icce-2024, aied-2024, li-2026]
+
+  - id: gem-step
+    featured: true
+    period: "2022 – present"
+    title:
+      en: "GEM-STEP: multimodal analysis of embodied science learning"
+      pt: "GEM-STEP: análise multimodal da aprendizagem corporificada de ciências"
+    context: "Generalized Embodied Modeling – Science through Technology Enhanced Play"
+    role:
+      en: "Lead for multimodal analysis and AI development"
+      pt: "Responsável pela análise multimodal e pelo desenvolvimento de IA"
+    summary:
+      en: "A modular framework that combines computer vision, audio processing, and LLM-based late fusion to classify self- and socially-shared regulation behaviors, refined over time with chain-of-thought prompting and active learning from human feedback."
+      pt: "Um framework modular que combina visão computacional, processamento de áudio e fusão tardia baseada em LLMs para classificar comportamentos de autorregulação e de regulação socialmente compartilhada, refinado continuamente com prompting chain-of-thought e aprendizado ativo a partir de feedback humano."
+    tags: [MULTIMODAL_AI, LLMS, COMPUTER_VISION, EMBODIED_LEARNING]
+    publications: [edm-mmla-2025, li-2026, under-review-knowledge-integration]
+
+  - id: llm-eval
+    featured: true
+    period: "2025 – 2026"
+    title:
+      en: "Evaluating LLMs as analysts of classroom interaction"
+      pt: "Avaliação de LLMs como analistas de interações em sala de aula"
+    context: "LAK 2026"
+    summary:
+      en: "A method for measuring how well large language models perform multimodal analysis of embodied classroom learning, compared against expert human interpretation."
+      pt: "Um método para medir o desempenho de modelos de linguagem de grande escala na análise multimodal da aprendizagem corporificada em sala de aula, em comparação com a interpretação de especialistas humanos."
+    tags: [LLM_EVALUATION, LLMS, LEARNING_ANALYTICS]
+    publications: [lak-2026]
+
+  - id: haifa
+    featured: true
+    period: "2024 – present"
+    title:
+      en: "LLMs and embodied computational thinking"
+      pt: "LLMs e pensamento computacional corporificado"
+    context: "International collaboration with the University of Haifa"
+    role:
+      en: "Co-lead"
+      pt: "Co-coordenadora"
+    summary:
+      en: "AI tools that turn students' embodied exploration into executable code through natural-language-to-code workflows, with prompt engineering and multilingual guardrails for culturally aware, pedagogically aligned interactions. Curriculum co-design and pilots in the U.S. and Israel."
+      pt: "Ferramentas de IA que transformam a exploração corporificada dos estudantes em código executável por meio de fluxos de linguagem natural para código, com engenharia de prompts e salvaguardas multilíngues para interações culturalmente sensíveis e pedagogicamente alinhadas. Co-design de currículo e pilotos nos EUA e em Israel."
+    tags: [LLMS, AGENTS, EMBODIED_LEARNING]
+    publications: []
+
+  - id: music
+    featured: false
+    period: "2008 – 2021"
+    title:
+      en: "Conducting particles: gesture-driven music visualization"
+      pt: "Regendo partículas: visualização musical controlada por gestos"
+    context: "University of Fortaleza (UNIFOR)"
+    summary:
+      en: "Real-time 3D particle systems mapped to musical structure and controlled with Leap Motion and Kinect, evaluated with musicians and conductors, plus a rhythm game for hand-therapy exercises tested with users with motor challenges."
+      pt: "Sistemas de partículas 3D em tempo real mapeados à estrutura musical e controlados por Leap Motion e Kinect, avaliados com músicos e regentes, além de um jogo rítmico para exercícios de terapia da mão testado com usuários com dificuldades motoras."
+    tags: [MUSIC_COMPUTING, GRAPHICS, HCI, ACCESSIBILITY]
+    publications: [jvlc-2013, svr-2014, svr-2015, jis-2015, svr-2017, segah-2018, entcom-2021]
+
+# ---------------------------------------------------------------------
+# Timeline. Every dated item lives here. Dates are YYYY-MM.
+# end: "present" = ongoing; end_expected = planned end (draw dotted).
+# Lanes: research | education | industry | honors | service
+# (publications are a lane too, generated from the publications list)
+# ---------------------------------------------------------------------
+lanes:
+  - { id: research,     en: "Research",              pt: "Pesquisa" }
+  - { id: education,    en: "Education",             pt: "Formação" }
+  - { id: industry,     en: "Industry",              pt: "Indústria" }
+  - { id: publications, en: "Publications",          pt: "Publicações" }
+  - { id: honors,       en: "Honors & grants",       pt: "Prêmios e financiamentos" }
+  - { id: service,      en: "Service & mentoring",   pt: "Serviço e orientação" }
+
+timeline:
+  # ---------------- RESEARCH ----------------
+  - id: vu-research
+    lane: research
+    start: "2022-08"
+    end: "present"
+    org: "Vanderbilt University · NSF EngageAI Institute"
+    role:
+      en: "Graduate Research Assistant"
+      pt: "Assistente de Pesquisa"
+    place: "Nashville, TN"
+    summary:
+      en: "Multimodal learning analytics: deep learning and LLMs that identify and interpret student behavior from gaze, movement, speech, and gesture; interactive tools for expert validation; lead on GEM-STEP multimodal AI; co-lead of the University of Haifa collaboration."
+      pt: "Learning analytics multimodal: deep learning e LLMs que identificam e interpretam o comportamento de estudantes a partir de olhar, movimento, fala e gestos; ferramentas interativas para validação por especialistas; responsável pela IA multimodal do GEM-STEP; co-coordenadora da colaboração com a University of Haifa."
+    tags: [MULTIMODAL_AI, HUMAN_IN_THE_LOOP, LLMS, LEARNING_ANALYTICS]
+
+  - id: unifor-research
+    lane: research
+    start: "2014-08"
+    end: "2017-07"
+    org: "Universidade de Fortaleza (UNIFOR)"
+    role:
+      en: "Graduate researcher, advised by Dr. Maria Andréia Formico Rodrigues"
+      pt: "Pesquisadora de mestrado, orientada pela Profa. Dra. Maria Andréia Formico Rodrigues"
+    place: "Fortaleza, Brazil"
+    summary:
+      en: "Real-time gesture-driven systems (Leap Motion, Kinect) that visualize musical structure; usability studies with musicians, conductors, and users with motor challenges."
+      pt: "Sistemas em tempo real controlados por gestos (Leap Motion, Kinect) para visualizar a estrutura musical; estudos de usabilidade com músicos, regentes e usuários com dificuldades motoras."
+    tags: [HCI, MUSIC_COMPUTING, GRAPHICS]
+
+  - id: cnpq-research
+    lane: research
+    start: "2008-03"
+    end: "2010-07"
+    org: "Universidade de Fortaleza (UNIFOR) · CNPq"
+    role:
+      en: "Undergraduate researcher (Scientific Initiation)"
+      pt: "Bolsista de Iniciação Científica"
+    place: "Fortaleza, Brazil"
+    summary:
+      en: "3D computer graphics and music computing for data visualization."
+      pt: "Computação gráfica 3D e computação musical para visualização de dados."
+    tags: [GRAPHICS, MUSIC_COMPUTING]
+
+  # ---------------- EDUCATION ----------------
+  - id: phd
+    lane: education
+    start: "2022-08"
+    end: "present"
+    end_expected: "2027-05"
+    org: "Vanderbilt University"
+    role:
+      en: "Ph.D. in Computer Science"
+      pt: "Doutorado em Ciência da Computação"
+    place: "Nashville, TN"
+    advisor: "Prof. Gautam Biswas"
+    summary:
+      en: "Intelligent open-ended learning environments for embodied learning, using AI and multimodal learning analytics to study students' learning behaviors."
+      pt: "Ambientes inteligentes de aprendizagem aberta para aprendizagem corporificada, usando IA e learning analytics multimodal para estudar comportamentos de aprendizagem dos estudantes."
+    tags: [MULTIMODAL_AI, EMBODIED_LEARNING]
+
+  - id: msc
+    lane: education
+    start: "2014-08"
+    end: "2017-07"
+    org: "Universidade de Fortaleza (UNIFOR)"
+    role:
+      en: "M.Sc. in Applied Informatics"
+      pt: "Mestrado em Informática Aplicada"
+    place: "Fortaleza, Brazil"
+    advisor: "Prof. Maria Andréia Formico Rodrigues"
+    thesis:
+      en: "Creation and Evaluation of a Gesture-Controlled Conducting System for the Visualization of Musical Structures"
+      pt: "Criação e Avaliação de um Sistema de Regência por Controle Gestual para Visualização de Estruturas Musicais"
+    tags: [HCI, VISUALIZATION, MUSIC_COMPUTING]
+
+  - id: bsc
+    lane: education
+    start: "2002-02"
+    end: "2010-07"            # VERIFY: Portuguese CV says Dec 2010
+    org: "Universidade de Fortaleza (UNIFOR)"
+    role:
+      en: "B.Sc. in Computer Science"
+      pt: "Bacharelado em Ciência da Computação"
+    place: "Fortaleza, Brazil"
+    advisor: "Prof. Maria Andréia Formico Rodrigues"
+    thesis:
+      en: "A Particle System Controlled by Musical Computing"
+      pt: "Computação Musical para Controle de Sistema de Partículas com Estilos"
+    tags: [GRAPHICS, MUSIC_COMPUTING]
+
+  # ---------------- INDUSTRY ----------------
+  - id: qintess
+    lane: industry
+    hidden: true              # DECIDE: omitted from academic CV, present in PT CV
+    start: "2022-08"
+    end: "2026-09"
+    org: "Qintess (allocated to Tribunal de Justiça do Estado do Pará)"
+    role:
+      en: "Software Developer Analyst (remote)"
+      pt: "Analista Desenvolvedora (remoto)"
+    place: "Remote"
+    summary:
+      en: "Development and maintenance of judicial systems in Java 8–17 and .NET with Oracle and PostgreSQL."
+      pt: "Desenvolvimento e sustentação de sistemas judiciais em Java 8–17 e .NET, com bancos Oracle e PostgreSQL."
+    tags: [SOFTWARE_ENGINEERING]
+
+  - id: tjpa-dev
+    lane: industry
+    start: "2021-02"
+    end: "2022-07"
+    org:
+      en: "Pará State Court of Appeals"
+      pt: "Tribunal de Justiça do Estado do Pará"
+    role:
+      en: "Head of Project Implementation (Software Development Team Lead)"
+      pt: "Chefe da Divisão de Implementação de Projetos"
+    place: "Belém, Brazil"
+    summary:
+      en: "Led the development team through analysis, fixes, and modernization of dozens of court systems, and through planning, testing, and deployment of new ones. Product Owner and Scrum Master across projects."
+      pt: "Liderança do time de desenvolvimento em análises, correções e atualizações de dezenas de sistemas, e no planejamento, desenvolvimento, teste e implantação de novas soluções. Product Owner e Scrum Master em diversos projetos."
+    tags: [LEADERSHIP, SOFTWARE_ENGINEERING]
+
+  - id: tjpa-db
+    lane: industry
+    start: "2020-07"
+    end: "2021-01"
+    org:
+      en: "Pará State Court of Appeals"
+      pt: "Tribunal de Justiça do Estado do Pará"
+    role:
+      en: "Head of the Database Division"
+      pt: "Chefe da Divisão de Banco de Dados"
+    place: "Belém, Brazil"
+    summary:
+      en: "Led the DBA team administering Oracle, SQL Server, PostgreSQL, and MySQL databases behind 60+ judicial systems; performance and data-integrity work."
+      pt: "Liderança do time de DBAs na administração e sustentação de bancos Oracle, SQL Server, PostgreSQL e MySQL que atendem a mais de 60 sistemas do Tribunal; desempenho e integridade de dados."
+    tags: [LEADERSHIP, DATA_INFRASTRUCTURE]
+
+  - id: lanlink
+    lane: industry
+    start: "2019-02"
+    end: "2020-06"
+    org: "Lanlink (Pará State Court of Appeals)"
+    role:
+      en: "Training Analyst"
+      pt: "Analista de Capacitação"
+    place: "Belém, Brazil"
+    summary:
+      en: "Created e-learning content and taught hands-on courses that moved public servants across the Amazon region from paper-based to digital judicial processes."
+      pt: "Elaboração de conteúdos de EAD e ministração de cursos teóricos e práticos que levaram servidores de toda a região amazônica dos processos judiciais em papel para os digitais."
+    tags: [TEACHING]
+
+  - id: immi
+    lane: industry
+    start: "2018-02"
+    end: "2019-01"
+    org: "IMMI Financial Solutions"
+    role:
+      en: "Lead Engineer"
+      pt: "Lead Engineer"
+    place: "Fortaleza, Brazil / Boston, USA"
+    summary:
+      en: "Led mobile (Swift, Android) and web (Node.js, React, MongoDB) development for financial platforms; agile delivery and client requirements across Brazil and the U.S."
+      pt: "Liderança técnica no desenvolvimento mobile (Swift, Android) e web (Node.js, React, MongoDB) de plataformas financeiras; projetos ágeis e levantamento de requisitos com clientes no Brasil e nos EUA."
+    tags: [LEADERSHIP, SOFTWARE_ENGINEERING]
+
+  - id: lead-dell
+    lane: industry
+    start: "2017-07"
+    end: "2018-04"
+    org: "LEAD – Dell Technologies"
+    role:
+      en: "Technology Consultant"
+      pt: "Consultora de Tecnologia"
+    place: "Fortaleza, Brazil"
+    summary:
+      en: "Architecture guidance for a hybrid mobile app for accessible distance learning; taught Dialogflow, React Native, and Redux to development teams."
+      pt: "Direcionamento arquitetural de um aplicativo móvel híbrido para educação a distância acessível; treinamentos em Dialogflow, React Native e Redux para desenvolvedores."
+    tags: [SOFTWARE_ENGINEERING, TEACHING, ACCESSIBILITY]
+
+  - id: ffit
+    lane: industry
+    start: "2014-11"
+    end: "2018-02"
+    org: "FFIT – Innovation in Health and Education"
+    role:
+      en: "Solutions Architect"
+      pt: "Arquiteta de Soluções"
+    place: "Fortaleza, Brazil"
+    summary:
+      en: "Designed and led mobile and web applications (Node.js, Ruby on Rails, Angular, Ionic, React Native) with reusable components and microservices; Product Owner and technical liaison with clients."
+      pt: "Projeto e liderança de aplicativos móveis e sistemas web (Node.js, Ruby on Rails, Angular, Ionic, React Native) com componentes reaproveitáveis e microsserviços; Product Owner e ponte técnica com os clientes."
+    tags: [SOFTWARE_ENGINEERING]
+
+  - id: unimed
+    lane: industry
+    start: "2011-06"
+    end: "2014-11"
+    org: "Unimed Fortaleza"
+    role:
+      en: "Systems Analyst"
+      pt: "Analista de Sistemas"
+    place: "Fortaleza, Brazil"
+    summary:
+      en: "Business analyst and full-stack developer for the main health-services portal (Java, JasperReports, PL/SQL); Scrum Master for the internal agile team."
+      pt: "Analista de negócios e desenvolvedora full-stack do principal portal de serviços de saúde (Java, JasperReports, PL/SQL); Scrum Master do time ágil interno."
+    tags: [SOFTWARE_ENGINEERING]
+
+  - id: caixa
+    lane: industry
+    start: "2007-09"
+    end: "2008-02"
+    org: "Caixa Econômica Federal"
+    role:
+      en: "Development Intern"
+      pt: "Estagiária de Desenvolvimento"
+    place: "Fortaleza, Brazil"
+    summary:
+      en: "Built an ASP system delivering Severance Fund (FGTS) data to clients; server maintenance and backups."
+      pt: "Desenvolvimento de sistema em ASP para disponibilizar dados do FGTS aos clientes; manutenção de servidores e backups."
+    tags: [SOFTWARE_ENGINEERING]
+
+  # ---------------- HONORS & GRANTS ----------------
+  - id: aivo-fellow
+    lane: honors
+    date: "2025"
+    org: "AI Institutes Virtual Organization (AIVO) · funded by Google.org"
+    role:
+      en: "AI4Ed Summer Fellow"
+      pt: "AI4Ed Summer Fellow"
+    summary:
+      en: "Competitive cross-institute fellowship; collaborated with NSF AI Institute researchers on multimodal AI and presented at the AI4Ed summit."
+      pt: "Fellowship competitiva entre institutos; colaboração com pesquisadores dos NSF AI Institutes em IA multimodal e apresentação no AI4Ed Summit."
+  - id: haifa-grant
+    lane: honors
+    date: "2024"
+    org: "University of Haifa"
+    role:
+      en: "Faculty Seed Grant ($10,000), co-author"
+      pt: "Faculty Seed Grant (US$ 10.000), coautora"
+    summary:
+      en: "Collaborative research on LLMs and embodied computational thinking."
+      pt: "Pesquisa colaborativa sobre LLMs e pensamento computacional corporificado."
+  - id: peabody-grant
+    lane: honors
+    date: "2024"
+    org: "Vanderbilt Peabody College"
+    role:
+      en: "Peabody Global Research Grant ($7,500), co-author"
+      pt: "Peabody Global Research Grant (US$ 7.500), coautora"
+    summary:
+      en: "International collaboration with the University of Haifa on AI-driven embodied learning."
+      pt: "Colaboração internacional com a University of Haifa em aprendizagem corporificada apoiada por IA."
+  - id: svr-award
+    lane: honors
+    date: "2017"
+    org: "19th Symposium on Virtual and Augmented Reality (SVR 2017)"
+    role:
+      en: "2nd Place, Best Full Paper (Application track)"
+      pt: "2º lugar, Melhor Artigo Completo (trilha de Aplicações)"
+    links_to: svr-2017
+  - id: cnpq
+    lane: honors
+    start: "2008-03"
+    end: "2010-07"
+    org: "CNPq (Brazil's National Council for Scientific and Technological Development)"
+    role:
+      en: "Scientific Initiation Scholarship"
+      pt: "Bolsa de Iniciação Científica"
+  - id: csm
+    lane: honors
+    date: "2017-03"
+    org: "Scrum Alliance"
+    role:
+      en: "Certified ScrumMaster®"
+      pt: "Certified ScrumMaster®"
+  - id: pbb
+    lane: honors
+    date: "2021-11"
+    org: "Caroli.org"
+    role:
+      en: "Certified PBB Practitioner"
+      pt: "Certified PBB Practitioner"
+  - id: redhat
+    lane: honors
+    date: "2025-09"
+    org: "Red Hat"
+    role:
+      en: "Red Hat Certified Developer in Cloud-native Applications"
+      pt: "Red Hat Certified Developer in Cloud-native Applications"
+
+  # ---------------- SERVICE & MENTORING ----------------
+  - id: cv4edu
+    lane: service
+    date: "2026"
+    org: "CVPR 2026"
+    role:
+      en: "Co-organizer, CV4Edu workshop: Computer Vision × Education"
+      pt: "Co-organizadora do workshop CV4Edu: Visão Computacional × Educação"
+    summary:
+      en: "Bridging vision, HCI, and learning sciences around domain robustness, construct-aligned inference, and privacy-aware multimodal evaluation."
+      pt: "Aproximando visão computacional, IHC e ciências da aprendizagem em torno de robustez de domínio, inferência alinhada a construtos e avaliação multimodal com preservação de privacidade."
+  - id: reviewing
+    lane: service
+    start: "2024-01"
+    end: "present"
+    org: "CVPR '26 · ICLS '24, '25 · CSCL '25 · AIED '25 · LAK '25 · EAAI '25 · Computers & Education"
+    role:
+      en: "Reviewer"
+      pt: "Revisora"
+  - id: mentor-2026
+    lane: service
+    start: "2026-02"
+    end: "present"
+    role:
+      en: "Supervising an undergraduate researcher"
+      pt: "Orientação de aluno de graduação"
+    summary:
+      en: "LLMs as late-fusion mechanisms for classification and explainable AI."
+      pt: "LLMs como mecanismos de fusão tardia para classificação e IA explicável."
+  - id: mentor-2025
+    lane: service
+    start: "2025-02"
+    end: "2025-11"
+    role:
+      en: "Supervising a visiting master's student"
+      pt: "Orientação de aluno de mestrado estrangeiro"
+    summary:
+      en: "LLM-based agents for computational thinking support."
+      pt: "Agentes baseados em LLMs para apoio ao pensamento computacional."
+  - id: mentor-2024
+    lane: service
+    start: "2024-05"
+    end: "2024-07"
+    role:
+      en: "Mentoring an undergraduate intern"
+      pt: "Mentoria de estagiário de graduação"
+    summary:
+      en: "Transcription and speaker diarization models for classroom audio."
+      pt: "Modelos de transcrição e diarização de falantes para áudio de sala de aula."
+  - id: mentor-2017
+    lane: service
+    start: "2017-09"
+    end: "2017-11"
+    role:
+      en: "Mentoring two undergraduate students"
+      pt: "Mentoria de dois alunos de graduação"
+    summary:
+      en: "Hand tracking and gesture recognition with Leap Motion; educational game development in Unreal Engine."
+      pt: "Rastreamento de mãos e reconhecimento de gestos com Leap Motion; desenvolvimento de jogos educacionais na Unreal Engine."
+
+# ---------------------------------------------------------------------
+# Publications. NEVER translate title / authors / venue.
+# type: journal | conference | workshop | under_review
+# Bold the substring "Fonteles, J.H." when rendering authors.
+# ---------------------------------------------------------------------
+publications:
+  - id: under-review-knowledge-integration
+    year: 2026
+    type: under_review
+    title: "A Human–AI Multimodal Analysis of Collaborative Knowledge Integration through Embodiment and Reflection"
+    authors: "Fonteles, J.H., Zhou, M., Cohn, C., Ayalon, E., Enyedy, N., & Biswas, G."
+    venue: "Under review"
+    first_author: true
+    tags: [HUMAN_IN_THE_LOOP, MULTIMODAL_AI, COLLABORATION]
+
+  - id: li-2026
+    year: 2026
+    type: journal
+    featured: true
+    title: "Analyzing Embodied Learning in Classroom Settings: A Human-in-the-Loop AI Approach for Multimodal Learning Analytics"
+    authors: "Fonteles, J.H., Cohn, C., Ayalon, E., Zhou, M., Ashwin, T.S., Davalos, E., Li, Z., Rayala, S., Mereddy, D., Coursey, A., Jain, S., Zhang, Y., Enyedy, N., Danish, J., & Biswas, G."
+    venue: "Learning and Instruction"
+    doi: "10.1016/j.learninstruc.2025.102274"
+    first_author: true
+    tags: [HUMAN_IN_THE_LOOP, MULTIMODAL_AI, LEARNING_ANALYTICS]
+
+  - id: lak-2026
+    year: 2026
+    type: conference
+    featured: true
+    title: "A Novel Approach to Evaluating the Effectiveness of Large Language Models for Multimodal Analysis of Embodied Learning in Classrooms"
+    authors: "Fonteles, J.H., Sivakumaran, N., et al."     # TODO: full author list
+    venue: "LAK 2026 – International Learning Analytics and Knowledge Conference"
+    doi: "10.1145/3785022.3785109"
+    first_author: true
+    tags: [LLM_EVALUATION, MULTIMODAL_AI]
+
+  - id: aaai-2026
+    year: 2026
+    type: conference
+    featured: true
+    title: "A Theory of Adaptive Scaffolding for LLM-Based Pedagogical Agents"
+    authors: "Cohn, C., Rayala, S., Srivastava, N., Fonteles, J.H., Jain, S., Luo, X., Mereddy, D., Mohammed, N., & Biswas, G."
+    venue: "AAAI 2026 – Proceedings of the AAAI Conference on Artificial Intelligence"
+    doi: "10.1609/aaai.v40i3.37154"
+    tags: [AGENTS, LLMS]
+
+  - id: edm-mmla-2025
+    year: 2025
+    type: workshop
+    featured: true
+    title: "Exploring Agentic Multimodal Late Fusion with LLMs for Embodied Learning"
+    authors: "Fonteles, J.H., Cohn, C., Mereddy, D., Ashwin, T.S., & Biswas, G."
+    venue: "MMLA Workshop @ EDM 2025"
+    url: "https://sites.google.com/colorado.edu/edm2025-mmla-workshop/accepted-papers"
+    first_author: true
+    tags: [AGENTS, MULTIMODAL_AI, LLMS]
+
+  - id: cscl-2025
+    year: 2025
+    type: conference
+    title: "Exploring the Design of Pedagogical Agent Roles in Collaborative STEM+C Learning"
+    authors: "Cohn, C., Fonteles, J.H., Snyder, C., Srivastava, N., Ashwin, T.S., Campbell, D., Montenegro, J., & Biswas, G."
+    venue: "CSCL 2025 – International Conference on Computer-Supported Collaborative Learning"
+    doi: "10.22318/cscl2025.380628"
+    tags: [AGENTS, COLLABORATION]
+
+  - id: icls-2025
+    year: 2025
+    type: conference
+    title: "Interaction Analysis Practice Within Computational Trends: Promises and Challenges"
+    authors: "Zhou, M., Danish, J., Fonteles, J.H., Davalos, E., Dim, E., Lane, A.C., Ashwin, T.S., Srivastava, N., Steinberg, S., Anton, G., Enyedy, N., & Biswas, G."
+    venue: "ICLS 2025 – International Conference of the Learning Sciences"
+    doi: "10.22318/icls2025.510113"
+    tags: [HUMAN_IN_THE_LOOP]
+
+  - id: lid-2025
+    year: 2025
+    type: journal
+    title: "Using Collaborative Interactivity Metrics to Analyze Students' Problem-Solving Behaviors during STEM+C Computational Modeling Tasks"
+    authors: "Snyder, C., Cohn, C., Fonteles, J.H., & Biswas, G."
+    venue: "Learning and Individual Differences"
+    doi: "10.1016/j.lindif.2025.102724"
+    tags: [COLLABORATION, LEARNING_ANALYTICS]
+
+  - id: icce-2024
+    year: 2024
+    type: conference
+    featured: true
+    title: "Designing an AI-Enhanced Timeline for Monitoring Multimodal Interactions in Embodied Learning Environments"
+    authors: "Fonteles, J.H., Srivastava, N., Davalos, E., Ashwin, T.S., & Biswas, G."
+    venue: "ICCE 2024 – 32nd International Conference on Computers in Education"
+    doi: "10.58459/icce.2024.4907"
+    first_author: true
+    tags: [XAI, VISUALIZATION, HUMAN_IN_THE_LOOP]
+
+  - id: aied-2024
+    year: 2024
+    type: conference
+    title: "A First Step in Using Machine Learning Methods to Enhance Interaction Analysis for Embodied Learning Environments"
+    authors: "Fonteles, J.H., Davalos, E., Ashwin, T.S., Zhang, Y., Zhou, M., Ayalon, E., Lane, A.C., Steinberg, S., Anton, G., Danish, J., Enyedy, N., & Biswas, G."
+    venue: "AIED 2024 – Artificial Intelligence in Education (LNCS)"
+    doi: "10.1007/978-3-031-64299-9_1"
+    first_author: true
+    tags: [HUMAN_IN_THE_LOOP, MULTIMODAL_AI]
+
+  - id: idc-2024
+    year: 2024
+    type: conference
+    title: "Promoting Equitable Learning Outcomes for Underserved Students in Open-Ended Learning Environments"
+    authors: "Fonteles, J.H., Akpanoko, C., Wisniewski, P., & Biswas, G."
+    venue: "IDC 2024 – 23rd ACM Interaction Design and Children Conference"
+    doi: "10.1145/3628516.3655753"
+    first_author: true
+    tags: [HCI]
+
+  - id: icls-2024
+    year: 2024
+    type: conference
+    title: "Exploring Artificial Intelligence Supported Interaction Analysis"
+    authors: "Zhou, M., Fonteles, J.H., Danish, J., Davalos, E., Steinberg, S., Biswas, G., & Enyedy, N."
+    venue: "ICLS 2024 – International Conference of the Learning Sciences"
+    doi: "10.22318/icls2024.926221"
+    tags: [HUMAN_IN_THE_LOOP]
+
+  - id: bjet-2024
+    year: 2024
+    type: journal
+    featured: true
+    title: "A Multimodal Approach to Support Teacher, Researcher and AI Collaboration in STEM+C Learning Environments"
+    authors: "Cohn, C., Snyder, C., Fonteles, J.H., Ashwin, T.S., Montenegro, J., & Biswas, G."
+    venue: "British Journal of Educational Technology"
+    doi: "10.1111/bjet.13518"
+    tags: [MULTIMODAL_AI, COLLABORATION]
+
+  - id: icmi-2024
+    year: 2024
+    type: conference
+    title: "3D Gaze Tracking for Studying Collaborative Interactions in Mixed-Reality Environments"
+    authors: "Davalos, E., Zhang, Y., Ashwin, T.S., Fonteles, J.H., Timalsina, U., & Biswas, G."
+    venue: "ICMI Companion '24 – 26th International Conference on Multimodal Interaction"
+    doi: "10.1145/3686215.3688380"
+    tags: [COMPUTER_VISION, COLLABORATION]
+
+  - id: under-review-slr
+    year: 2024
+    type: under_review
+    title: "Multimodal Methods for Analyzing Learning and Training Environments: A Systematic Literature Review"
+    authors: "Cohn, C., Davalos, E., Vatral, C., Fonteles, J.H., Wang, H.D., Ma, M., & Biswas, G."
+    venue: "Under review"
+    tags: [MULTIMODAL_AI]
+
+  - id: lak-2024
+    year: 2024
+    type: conference
+    title: "Analyzing Students Collaborative Problem-Solving Behaviors in Synergistic STEM+C Learning"
+    authors: "Snyder, C., Hutchins, N.M., Cohn, C., Fonteles, J.H., & Biswas, G."
+    venue: "LAK 2024 – 14th Learning Analytics and Knowledge Conference"
+    doi: "10.1145/3636555.3636912"
+    tags: [COLLABORATION, LEARNING_ANALYTICS]
+
+  - id: bigdata-2023
+    year: 2023
+    type: conference
+    title: "ChimeraPy: A Scientific Distributed Streaming Framework for Real-time Multimodal Data Retrieval and Processing"
+    authors: "Davalos, E., Timalsina, U., Zhang, Y., Wu, J., Fonteles, J.H., & Biswas, G."
+    venue: "IEEE BigData 2023 – IEEE International Conference on Big Data"
+    doi: "10.1109/BigData59044.2023.10386382"
+    tags: [DATA_INFRASTRUCTURE, MULTIMODAL_AI]
+
+  - id: lak-2023
+    year: 2023
+    type: conference
+    title: "Identifying Gaze Behavior Evolution via Temporal Fully-Weighted Scanpath Graphs"
+    authors: "Davalos, E., Vatral, C., Cohn, C., Fonteles, J.H., Biswas, G., Mohammed, N., et al."
+    venue: "LAK23 – 13th International Learning Analytics and Knowledge Conference"
+    doi: "10.1145/3576050.3576117"
+    tags: [COMPUTER_VISION, LEARNING_ANALYTICS]
+
+  - id: entcom-2021
+    year: 2021
+    type: journal
+    title: "User Experience in a Kinect-Based Conducting System for Visualization of Musical Structures"
+    authors: "Fonteles, J.H., & Rodrigues, M.A.F."
+    venue: "Entertainment Computing"
+    doi: "10.1016/j.entcom.2020.100399"
+    first_author: true
+    tags: [HCI, MUSIC_COMPUTING]
+
+  - id: segah-2018
+    year: 2018
+    type: conference
+    title: "Gesture-Controlled Interactive Musical Game to Practice Hand Therapy Exercises and Learn Rhythm and Melodic Structures"
+    authors: "Fonteles, J.H., Serpa, Y.R., Barbosa, R.G., Rodrigues, M.A.F., & Alves, M.S."
+    venue: "IEEE SeGAH 2018 – 6th International Conference on Serious Games and Applications for Health"
+    doi: "10.1109/SeGAH.2018.8401367"
+    first_author: true
+    tags: [HCI, ACCESSIBILITY, MUSIC_COMPUTING]
+
+  - id: svr-2017
+    year: 2017
+    type: conference
+    award:
+      en: "2nd Place, Best Full Paper"
+      pt: "2º lugar, Melhor Artigo Completo"
+    title: "Interactive Musical Game with a Gesture-Controlled Virtual Puppet"
+    authors: "Fonteles, J.H., Fernandes, M.S.S., Queiroz, D.L., & Rodrigues, M.A.F."
+    venue: "SVR 2017 – 19th Symposium on Virtual and Augmented Reality"
+    doi: "10.1109/SVR.2017.41"
+    first_author: true
+    tags: [HCI, MUSIC_COMPUTING]
+
+  - id: jis-2015
+    year: 2015
+    type: journal
+    title: "Visual and Gesture-Driven Interaction Using the Leap Motion to Conduct a 3D Particle System: Evaluation and Analysis of an Orchestral Performance"
+    authors: "Fonteles, J.H., Sousa, E.S., & Rodrigues, M.A.F."
+    venue: "Journal on Interactive Systems"
+    doi: "10.5753/jis.2015.660"
+    first_author: true
+    tags: [HCI, MUSIC_COMPUTING, GRAPHICS]
+
+  - id: svr-2015
+    year: 2015
+    type: conference
+    title: "Visual and Interactive Performance of Particles Conducted by the Leap Motion"
+    authors: "Fonteles, J.H., Sousa, E.S., & Rodrigues, M.A.F."
+    venue: "SVR 2015 – XVII Symposium on Virtual and Augmented Reality"
+    doi: "10.1109/SVR.2015.43"
+    first_author: true
+    tags: [GRAPHICS, MUSIC_COMPUTING]
+
+  - id: sbcas-2015
+    year: 2015
+    type: workshop
+    title: "Apresentando o Tratbem: Suporte Social, Informacional e Psicológico ao Tabagista"
+    authors: "Oliveira, F., Sales, M.P., Fonteles, J.H., Silva, N., Pereira, F., Melo, J., Cavalcante, I., & Moraes, L."
+    venue: "XV Workshop de Informática Médica – XXXV Congresso da Sociedade Brasileira de Computação"
+    doi: "10.5753/sbcas.2015.10377"
+    tags: [HCI]
+
+  - id: svr-2014
+    year: 2014
+    type: conference
+    title: "Real-Time Animations of Virtual Fountains Based on a Particle System for Visualizing Musical Structures"
+    authors: "Fonteles, J.H., Rodrigues, M.A.F., & Basso, V.E."
+    venue: "SVR 2014 – XVI Symposium on Virtual and Augmented Reality"
+    doi: "10.1109/SVR.2014.35"
+    first_author: true
+    tags: [GRAPHICS, MUSIC_COMPUTING]
+
+  - id: jvlc-2013
+    year: 2013
+    type: journal
+    title: "Creating and Evaluating a Particle System for Music Visualization"
+    authors: "Fonteles, J.H., Rodrigues, M.A.F., & Basso, V.E."
+    venue: "Journal of Visual Languages & Computing"
+    doi: "10.1016/j.jvlc.2013.10.002"
+    first_author: true
+    tags: [GRAPHICS, VISUALIZATION, MUSIC_COMPUTING]
+
+# ---------------------------------------------------------------------
+# UI strings
+# ---------------------------------------------------------------------
+ui:
+  nav_about:          { en: "About",              pt: "Sobre" }
+  nav_research:       { en: "Research",           pt: "Pesquisa" }
+  nav_timeline:       { en: "Timeline",           pt: "Trajetória" }
+  nav_publications:   { en: "Publications",       pt: "Publicações" }
+  contact:            { en: "Contact",            pt: "Contato" }
+  present:            { en: "present",            pt: "atual" }
+  expected:           { en: "expected",           pt: "previsto" }
+  at_this_point:      { en: "At this point",      pt: "Neste momento" }
+  list_view:          { en: "Read as a list",     pt: "Ver como lista" }
+  timeline_view:      { en: "Show timeline",      pt: "Ver linha do tempo" }
+  all_lanes:          { en: "All",                pt: "Todos" }
+  first_author_only:  { en: "First-author only",  pt: "Apenas como primeira autora" }
+  under_review:       { en: "Under review",       pt: "Em avaliação" }
+  journal:            { en: "Journal",            pt: "Periódico" }
+  conference:         { en: "Conference",         pt: "Conferência" }
+  workshop:           { en: "Workshop",           pt: "Workshop" }
+  copy_citation:      { en: "Copy citation",      pt: "Copiar referência" }
+  copied:             { en: "Copied",             pt: "Copiado" }
+  related_pubs:       { en: "Related publications", pt: "Publicações relacionadas" }
+  advisor:            { en: "Advisor",            pt: "Orientação" }
+  thesis:             { en: "Thesis",             pt: "Dissertação/TCC" }
+  not_found_title:    { en: "Nothing at this timestamp.", pt: "Nada neste ponto da linha do tempo." }
+  not_found_link:     { en: "Back to the start",  pt: "Voltar ao início" }
+  switch_lang:        { en: "Português",          pt: "English" }
+  suggest_pt:         { en: "Esta página também está disponível em português.", pt: "" }

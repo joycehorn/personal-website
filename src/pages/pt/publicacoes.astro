@@ -1,0 +1,44 @@
+---
+import Base from '../../layouts/Base.astro';
+import { loadContent, getUi } from '../../lib/content';
+
+const content = loadContent();
+const locale = 'pt';
+const navPubs = getUi('nav_publications', locale);
+---
+
+<Base locale={locale} currentPath="/pt/publicacoes" title={navPubs}>
+  <div class="container shell-content">
+    <div class="shell-hero">
+      <h1 class="shell-title">{navPubs}</h1>
+      <div class="shell-notice">
+        <code>[Phase 1 Shell: Publicações em Português]</code>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .shell-content {
+    padding: 6rem var(--gutter);
+  }
+
+  .shell-hero {
+    max-width: 65ch;
+  }
+
+  .shell-title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+
+  .shell-notice {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--lane-publications);
+    border-left: 2px solid var(--lane-publications);
+    padding-left: 1rem;
+  }
+</style>

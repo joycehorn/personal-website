@@ -1,0 +1,95 @@
+---
+import type { Locale } from '../lib/types';
+import { getUi } from '../lib/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const suggestText = getUi('suggest_pt', 'en');
+---
+
+{locale === 'en' && suggestText && (
+  <div id="pt-suggestion-banner" class="pt-banner" style="display: none;" role="region" aria-label="Language suggestion">
+    <div class="container banner-inner">
+      <span class="banner-text">
+        {suggestText}
+        <a href="/pt/" class="banner-link">Acessar em português</a>
+      </span>
+      <button type="button" id="dismiss-pt-banner" class="banner-close" aria-label="Fechar sugestão de idioma">
+        ✕
+      </button>
+    </div>
+  </div>
+)}
+
+<script>
+  try {
+    const dismissed = localStorage.getItem('dismiss_suggest_pt');
+    if (!dismissed && navigator.language && navigator.language.toLowerCase().startsWith('pt')) {
+      const banner = document.getElementById('pt-suggestion-banner');
+      if (banner) {
+        banner.style.display = 'block';
+      }
+    }
+
+    const closeBtn = document.getElementById('dismiss-pt-banner');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        try {
+          localStorage.setItem('dismiss_suggest_pt', '1');
+        } catch (e) {}
+        const banner = document.getElementById('pt-suggestion-banner');
+        if (banner) {
+          banner.style.display = 'none';
+        }
+      });
+    }
+  } catch (e) {
+    // Graceful fallback if localStorage is disabled
+  }
+</script>
+
+<style>
+  .pt-banner {
+    background-color: var(--rule-subtle);
+    border-bottom: 1px solid var(--rule);
+    padding: 0.5rem 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--ink);
+  }
+
+  .banner-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .banner-text {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .banner-link {
+    text-decoration: underline;
+    font-weight: 500;
+  }
+
+  .banner-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .banner-close:hover {
+    color: var(--ink);
+  }
+</style>

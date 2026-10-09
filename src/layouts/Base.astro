@@ -1,0 +1,139 @@
+---
+import '@fontsource-variable/newsreader/standard.css';
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/500.css';
+import '@fontsource/ibm-plex-sans/600.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/base.css';
+
+import type { Locale } from '../lib/types';
+import { loadContent, isTodo, t } from '../lib/content';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LanguageBanner from '../components/LanguageBanner.astro';
+
+interface Props {
+  locale: Locale;
+  title?: string;
+  description?: string;
+  currentPath?: string;
+}
+
+const { locale, title, description, currentPath = Astro.url.pathname } = Astro.props;
+const content = loadContent();
+
+const htmlLang = locale === 'pt' ? 'pt-BR' : 'en';
+const siteUrl = 'https://joycehornfonteles.com';
+
+// Construct alternate URLs
+const enPath = currentPath.startsWith('/pt/publicacoes')
+  ? '/publications'
+  : currentPath.startsWith('/pt')
+    ? '/'
+    : currentPath;
+
+const ptPath = currentPath.startsWith('/publications')
+  ? '/pt/publicacoes'
+  : currentPath.startsWith('/pt')
+    ? currentPath
+    : '/pt/';
+
+const canonicalUrl = new URL(currentPath, siteUrl).toString();
+const enUrl = new URL(enPath, siteUrl).toString();
+const ptUrl = new URL(ptPath, siteUrl).toString();
+
+const pageTitle = title
+  ? `${title} · ${content.meta.name}`
+  : `${content.meta.name} — ${t(content.headline, locale)}`;
+
+const pageDesc = description ?? t(content.headline, locale);
+
+// Person JSON-LD
+const activeLinks = Object.entries(content.meta.links)
+  .filter(([_, url]) => !isTodo(url))
+  .map(([_, url]) => url);
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: content.meta.name,
+  url: siteUrl,
+  email: `mailto:${content.meta.email}`,
+  jobTitle: locale === 'pt' ? 'Doutoranda em Ciência da Computação' : 'PhD Candidate in Computer Science',
+  affiliation: {
+    '@type': 'EducationalOrganization',
+    name: 'Vanderbilt University',
+  },
+  alumniOf: [
+    {
+      '@type': 'EducationalOrganization',
+      name: 'Universidade de Fortaleza (UNIFOR)',
+    },
+  ],
+  knowsLanguage: ['en', 'pt'],
+  sameAs: activeLinks,
+};
+
+const skipLinkText = locale === 'pt' ? 'Pular para o conteúdo principal' : 'Skip to main content';
+---
+
+<!doctype html>
+<html lang={htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDesc} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Canonical & Alternates -->
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="pt-BR" href={ptUrl} />
+    <link rel="alternate" hreflang="x-default" href={enUrl} />
+
+    <!-- Open Graph & Twitter -->
+    <meta property="og:site_name" content={content.meta.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDesc} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={locale === 'pt' ? 'pt_BR' : 'en_US'} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDesc} />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
+
+    <!-- Theme initialization script (prevents flash) -->
+    <script is:inline>
+      (function() {
+        try {
+          const stored = localStorage.getItem('theme');
+          if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+        } catch (e) {
+          // Ignore error in case of restrictive sandboxes
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">{skipLinkText}</a>
+    <LanguageBanner locale={locale} />
+    <Header locale={locale} currentPath={currentPath} />
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <Footer locale={locale} currentPath={currentPath} />
+  </body>
+</html>

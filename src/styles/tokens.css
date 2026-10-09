@@ -1,0 +1,94 @@
+:root {
+  /* Fonts */
+  --font-display: 'Newsreader Variable', 'Newsreader', Garamond, Georgia, serif;
+  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Monaco, Consolas, monospace;
+
+  /* Typography scale */
+  --text-base: 1.0625rem; /* 17px */
+  --text-lead: 1.125rem;  /* 18px */
+  --text-mono: 0.8125rem; /* 13px */
+  --text-mono-sm: 0.75rem; /* 12px */
+
+  /* Sizing and layout */
+  --max-width: 1180px;
+  --gutter: 1.5rem;
+  --col-reading: 65ch;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+
+  /* Light theme (default) */
+  --paper: #F6F3EC;
+  --ink: #1B1A17;
+  --muted: #6B675E;
+  --rule: #DDD7CA;
+  --rule-subtle: rgba(27, 26, 23, 0.08);
+
+  /* Lane accents */
+  --lane-research: #1F5E5B;
+  --lane-education: #3B4A8C;
+  --lane-industry: #A4552C;
+  --lane-publications: #1B1A17;
+  --lane-honors: #9A7A22;
+  --lane-service: #5E6B3A;
+
+  /* Focus ring */
+  --focus-ring: #1F5E5B;
+}
+
+/* Dark theme via media query */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14130F;
+    --ink: #ECE8DF;
+    --muted: #9C978C;
+    --rule: #2E2C26;
+    --rule-subtle: rgba(236, 232, 223, 0.08);
+
+    --lane-research: #5FA8A2;
+    --lane-education: #8B98D6;
+    --lane-industry: #D98A5F;
+    --lane-publications: #ECE8DF;
+    --lane-honors: #D2B55E;
+    --lane-service: #A5B47A;
+
+    --focus-ring: #5FA8A2;
+  }
+}
+
+/* Explicit data-theme overrides */
+:root[data-theme="dark"] {
+  --paper: #14130F;
+  --ink: #ECE8DF;
+  --muted: #9C978C;
+  --rule: #2E2C26;
+  --rule-subtle: rgba(236, 232, 223, 0.08);
+
+  --lane-research: #5FA8A2;
+  --lane-education: #8B98D6;
+  --lane-industry: #D98A5F;
+  --lane-publications: #ECE8DF;
+  --lane-honors: #D2B55E;
+  --lane-service: #A5B47A;
+
+  --focus-ring: #5FA8A2;
+}
+
+:root[data-theme="light"] {
+  --paper: #F6F3EC;
+  --ink: #1B1A17;
+  --muted: #6B675E;
+  --rule: #DDD7CA;
+  --rule-subtle: rgba(27, 26, 23, 0.08);
+
+  --lane-research: #1F5E5B;
+  --lane-education: #3B4A8C;
+  --lane-industry: #A4552C;
+  --lane-publications: #1B1A17;
+  --lane-honors: #9A7A22;
+  --lane-service: #5E6B3A;
+
+  --focus-ring: #1F5E5B;
+}
