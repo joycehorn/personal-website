@@ -1,52 +1,28 @@
 ---
 import Base from '../layouts/Base.astro';
-import { loadContent, t } from '../lib/content';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import ResearchThemes from '../components/ResearchThemes.astro';
+import Projects from '../components/Projects.astro';
+import Bridge from '../components/Bridge.astro';
 
-const content = loadContent();
 const locale = 'en';
 ---
 
 <Base locale={locale} currentPath="/">
-  <div class="container shell-content">
-    <div class="shell-hero">
-      <h1 class="shell-title">{content.meta.name}</h1>
-      <p class="shell-headline">{t(content.headline, locale)}</p>
-      <div class="shell-notice">
-        <code>[Phase 1 Shell: English]</code>
-      </div>
-    </div>
-  </div>
+  <Hero locale={locale} />
+  <About locale={locale} />
+  <ResearchThemes locale={locale} />
+  <Projects locale={locale} />
+
+  <!-- Timeline centerpiece anchor (built in Phase 3) -->
+  <div id="timeline" class="timeline-placeholder-anchor" />
+
+  <Bridge locale={locale} />
 </Base>
 
 <style>
-  .shell-content {
-    padding: 6rem var(--gutter);
-  }
-
-  .shell-hero {
-    max-width: 65ch;
-  }
-
-  .shell-title {
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-    font-weight: 400;
-    letter-spacing: -0.02em;
-  }
-
-  .shell-headline {
-    font-size: 1.25rem;
-    color: var(--muted);
-    line-height: 1.5;
-    margin-bottom: 2rem;
-  }
-
-  .shell-notice {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono);
-    color: var(--lane-research);
-    border-left: 2px solid var(--lane-research);
-    padding-left: 1rem;
+  .timeline-placeholder-anchor {
+    scroll-margin-top: 5rem;
   }
 </style>

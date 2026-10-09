@@ -1,0 +1,104 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import type { Locale } from '../lib/types';
+import { loadContent, t, getUi } from '../lib/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = loadContent();
+
+const sectionLabel = getUi('nav_about', locale);
+const rawAboutText = t(content.about, locale);
+const paragraphs = rawAboutText.split(/\n\n+/).filter((p) => p.trim().length > 0);
+
+// Check if portrait image actually exists on disk
+let hasPortrait = false;
+const portraitPath = content.meta.portrait;
+if (portraitPath) {
+  const diskPath = path.resolve(process.cwd(), 'public', portraitPath.replace(/^\//, ''));
+  hasPortrait = fs.existsSync(diskPath);
+}
+---
+
+<section id="about" class="about-section" aria-labelledby="about-label">
+  <div class="container">
+    <div class="section-grid">
+      <div class="section-label" id="about-label">
+        {sectionLabel}
+      </div>
+
+      <div class="section-content about-content">
+        <div class="reading-column about-prose">
+          {paragraphs.map((para) => (
+            <p>{para.trim()}</p>
+          ))}
+        </div>
+
+        {hasPortrait && (
+          <aside class="about-portrait-wrap">
+            <img
+              src={portraitPath}
+              alt={content.meta.name}
+              class="about-portrait"
+              loading="lazy"
+              width="240"
+              height="300"
+            />
+          </aside>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-section {
+    position: relative;
+  }
+
+  .about-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 3.5rem;
+  }
+
+  .about-prose p {
+    font-size: var(--text-base);
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+
+  .about-prose p:last-child {
+    margin-bottom: 0;
+  }
+
+  .about-portrait-wrap {
+    flex-shrink: 0;
+    max-width: 240px;
+  }
+
+  .about-portrait {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    filter: grayscale(15%);
+  }
+
+  @media (max-width: 899px) {
+    .about-content {
+      flex-direction: column-reverse;
+      gap: 2rem;
+    }
+
+    .about-portrait-wrap {
+      max-width: 180px;
+    }
+  }
+</style>

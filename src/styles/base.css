@@ -97,6 +97,10 @@ a:hover {
   :root {
     --gutter: 1rem; /* 16px side gutters on mobile */
   }
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 
 /* Section grid: Left margin column for mono label, right column for content */
