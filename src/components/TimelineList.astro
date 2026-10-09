@@ -1,0 +1,352 @@
+---
+import type { Locale, Publication } from '../lib/types';
+import { loadContent, t, getUi } from '../lib/content';
+import { formatDateRange, formatDate } from '../lib/dates';
+import { buildTimelineDataset, type NormalizedTimelineEntry } from '../lib/timeline-math';
+import Chip from './Chip.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = loadContent();
+const lanes = content.lanes;
+const dataset = buildTimelineDataset(content.timeline, content.publications, locale);
+
+const pubsMap = new Map<string, Publication>();
+for (const p of content.publications) {
+  pubsMap.set(p.id, p);
+}
+
+const pubsHref = locale === 'pt' ? '/pt/publicacoes' : '/publications';
+const advisorLabel = getUi('advisor', locale);
+const thesisLabel = getUi('thesis', locale);
+const allLanesLabel = getUi('all_lanes', locale);
+
+// Group dataset by lane in lane order
+const entriesByLane = lanes.map((lane) => {
+  const laneEntries = dataset.filter((entry) => entry.lane === lane.id);
+  // Sort reverse chronological (newest first)
+  laneEntries.sort((a, b) => b.start - a.start);
+  return {
+    lane,
+    entries: laneEntries,
+  };
+});
+---
+
+<div class="timeline-list-wrapper" id="timeline-list-container">
+  <!-- Sticky lane filter controls on mobile and list mode -->
+  <div class="lane-filters-bar" role="toolbar" aria-label="Filter timeline lanes">
+    <button
+      type="button"
+      class="lane-filter-btn active"
+      data-filter="all"
+      aria-pressed="true"
+    >
+      {allLanesLabel}
+    </button>
+    {lanes.map((lane) => (
+      <button
+        type="button"
+        class="lane-filter-btn"
+        data-filter={lane.id}
+        aria-pressed="false"
+      >
+        <span class="lane-filter-pip" style={`background-color: var(--lane-${lane.id});`} aria-hidden="true" />
+        <span>{lane[locale]}</span>
+      </button>
+    ))}
+  </div>
+
+  <div class="timeline-lane-groups">
+    {entriesByLane.map(({ lane, entries }) => (
+      <section
+        class="timeline-lane-group"
+        data-lane={lane.id}
+        aria-labelledby={`lane-heading-${lane.id}`}
+      >
+        <div class="lane-header">
+          <span class="lane-pip" style={`background-color: var(--lane-${lane.id});`} aria-hidden="true" />
+          <h3 id={`lane-heading-${lane.id}`} class="lane-heading">{lane[locale]}</h3>
+        </div>
+
+        <div class="lane-entries">
+          {entries.map((entry) => {
+            const dateStr = entry.isRange
+              ? formatDateRange(entry.rawStart, entry.rawEnd, locale, entry.rawEndExpected)
+              : formatDate(entry.rawDate, locale);
+
+            return (
+              <article class="timeline-entry-row" data-lane={entry.lane}>
+                <div class="entry-meta">
+                  <span class="entry-date">{dateStr}</span>
+                  {entry.org && <span class="entry-org">{entry.org}</span>}
+                </div>
+
+                <div class="entry-body">
+                  <h4 class="entry-role">
+                    {entry.isPublication ? entry.title : entry.role}
+                  </h4>
+
+                  {!entry.isPublication && entry.summary && (
+                    <p class="entry-summary">{entry.summary}</p>
+                  )}
+
+                  {entry.advisor && (
+                    <div class="entry-extra">
+                      <span class="extra-label">{advisorLabel}:</span> {entry.advisor}
+                    </div>
+                  )}
+
+                  {entry.thesis && (
+                    <div class="entry-extra">
+                      <span class="extra-label">{thesisLabel}:</span> {entry.thesis}
+                    </div>
+                  )}
+
+                  {entry.tags.length > 0 && (
+                    <div class="entry-chips">
+                      {entry.tags.map((tag) => (
+                        <Chip tag={tag} locale={locale} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    ))}
+  </div>
+</div>
+
+<script>
+  // Client filter toggle for the list view
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>('.lane-filter-btn');
+  const laneGroups = document.querySelectorAll<HTMLElement>('.timeline-lane-group');
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const filter = btn.getAttribute('data-filter');
+      filterBtns.forEach((b) => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+
+      laneGroups.forEach((group) => {
+        const laneId = group.getAttribute('data-lane');
+        if (filter === 'all' || laneId === filter) {
+          group.style.display = 'block';
+        } else {
+          group.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .timeline-list-wrapper {
+    width: 100%;
+  }
+
+  /* Sticky filters bar */
+  .lane-filters-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 3.5rem;
+    background-color: var(--paper);
+    z-index: 20;
+  }
+
+  .lane-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.25rem 0.55rem;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .lane-filter-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .lane-filter-btn.active {
+    color: var(--ink);
+    border-color: var(--ink);
+    font-weight: 500;
+    background: var(--rule-subtle);
+  }
+
+  .lane-filter-pip {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  /* Lane group sections */
+  .timeline-lane-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  .timeline-lane-group {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .timeline-lane-group:last-child {
+    border-bottom: none;
+  }
+
+  .lane-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .lane-pip {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .lane-heading {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  /* Entry row styling */
+  .lane-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .timeline-entry-row {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 1.5rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--rule);
+    transition: border-color var(--transition-fast);
+  }
+
+  .timeline-entry-row[data-lane="research"] { border-left-color: var(--lane-research); }
+  .timeline-entry-row[data-lane="education"] { border-left-color: var(--lane-education); }
+  .timeline-entry-row[data-lane="industry"] { border-left-color: var(--lane-industry); }
+  .timeline-entry-row[data-lane="publications"] { border-left-color: var(--lane-publications); }
+  .timeline-entry-row[data-lane="honors"] { border-left-color: var(--lane-honors); }
+  .timeline-entry-row[data-lane="service"] { border-left-color: var(--lane-service); }
+
+  .entry-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .entry-date {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+
+  .entry-org {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .entry-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    max-width: var(--col-reading);
+  }
+
+  .entry-role {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  .entry-summary {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  .entry-extra {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .extra-label {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+
+  .entry-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .timeline-entry-row {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      padding-left: 0.85rem;
+    }
+  }
+
+  /* Print view rules */
+  @media print {
+    .lane-filters-bar {
+      display: none !important;
+    }
+    .timeline-lane-group {
+      break-inside: avoid;
+      padding-bottom: 1.5rem;
+    }
+    .timeline-entry-row {
+      break-inside: avoid;
+    }
+  }
+</style>

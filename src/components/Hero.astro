@@ -1,6 +1,7 @@
 ---
 import type { Locale } from '../lib/types';
 import { loadContent, t, isTodo } from '../lib/content';
+import MiniTimeline from './MiniTimeline.astro';
 
 interface Props {
   locale: Locale;
@@ -45,8 +46,7 @@ const activeLinks = Object.entries(links).filter(([_, url]) => !isTodo(url));
         )}
       </div>
 
-      <!-- Slot reserved for mini timeline strip in Phase 3 -->
-      <slot name="mini-timeline" />
+      <MiniTimeline locale={locale} />
     </div>
   </div>
 </section>

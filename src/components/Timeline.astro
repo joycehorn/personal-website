@@ -1,0 +1,960 @@
+---
+import type { Locale } from '../lib/types';
+import { loadContent, getUi } from '../lib/content';
+import { buildTimelineDataset } from '../lib/timeline-math';
+import TimelineList from './TimelineList.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = loadContent();
+const lanes = content.lanes;
+const dataset = buildTimelineDataset(content.timeline, content.publications, locale);
+
+const sectionLabel = getUi('nav_timeline', locale);
+const atThisPointLabel = getUi('at_this_point', locale);
+const listViewLabel = getUi('list_view', locale);
+const timelineViewLabel = getUi('timeline_view', locale);
+const allLanesLabel = getUi('all_lanes', locale);
+
+// Serialize configuration for progressive enhancement client script
+const timelineConfig = {
+  locale,
+  lanes,
+  dataset,
+  ui: {
+    atThisPoint: atThisPointLabel,
+    advisor: getUi('advisor', locale),
+    thesis: getUi('thesis', locale),
+    relatedPubs: getUi('related_pubs', locale),
+    present: getUi('present', locale),
+    expected: getUi('expected', locale),
+    publicationsHref: locale === 'pt' ? '/pt/publicacoes' : '/publications',
+  },
+};
+---
+
+<section id="timeline" class="timeline-section" aria-labelledby="timeline-label">
+  <div class="container timeline-container">
+    <div class="section-grid">
+      <div class="section-label" id="timeline-label">
+        {sectionLabel}
+      </div>
+
+      <div class="section-content timeline-main-column">
+        <!-- View mode controls: Timeline view vs List view -->
+        <div class="timeline-view-controls">
+          <div class="view-toggle-group" role="radiogroup" aria-label="Timeline display mode">
+            <button
+              type="button"
+              id="btn-view-chart"
+              class="view-toggle-btn active"
+              role="radio"
+              aria-checked="true"
+            >
+              {timelineViewLabel}
+            </button>
+            <button
+              type="button"
+              id="btn-view-list"
+              class="view-toggle-btn"
+              role="radio"
+              aria-checked="false"
+            >
+              {listViewLabel}
+            </button>
+          </div>
+        </div>
+
+        <!-- Desktop Interactive Swimlane Island (Mounts at >= 900px) -->
+        <div id="desktop-timeline-app" class="desktop-timeline-island" data-config={JSON.stringify(timelineConfig)}>
+          <!-- Lane legend filter buttons -->
+          <div class="timeline-legend-bar" role="toolbar" aria-label="Toggle swimlanes">
+            <span class="legend-title">Lanes:</span>
+            {lanes.map((lane) => (
+              <button
+                type="button"
+                class="legend-lane-btn"
+                data-lane={lane.id}
+                aria-pressed="true"
+              >
+                <span class="legend-pip" style={`background-color: var(--lane-${lane.id});`} aria-hidden="true" />
+                <span class="legend-label">{lane[locale]}</span>
+              </button>
+            ))}
+          </div>
+
+          <!-- Accessible Live Region for Screen Readers -->
+          <div
+            id="timeline-live-announcer"
+            class="sr-only"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            Timeline chart loaded.
+          </div>
+
+          <!-- SVG Chart Container (Single Focusable Tab Stop) -->
+          <div
+            id="timeline-chart-wrapper"
+            class="chart-wrapper"
+            tabindex="0"
+            role="region"
+            aria-label="Interactive Career Swimlanes: Use left and right arrow keys to scrub months, Shift to scrub years, Home or End to jump"
+          >
+            <div id="playhead-badge" class="playhead-badge">
+              <span id="playhead-date-label">Today</span>
+              <span id="playhead-pin-indicator" class="pin-indicator" style="display: none;">[PINNED]</span>
+            </div>
+            <svg id="timeline-svg" class="timeline-svg" aria-hidden="true"></svg>
+          </div>
+
+          <!-- "At this point" Dynamic DOM Panel -->
+          <div id="at-this-point-panel" class="at-this-point-panel" aria-live="off">
+            <header class="panel-header">
+              <div class="panel-title-wrap">
+                <span class="panel-label">{atThisPointLabel}</span>
+                <span id="panel-current-date" class="panel-date">...</span>
+              </div>
+              <span id="panel-count-badge" class="panel-count">0 items active</span>
+            </header>
+
+            <div id="panel-active-entries" class="panel-entries-list">
+              <!-- Rendered dynamically by client script -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Semantic Server-Rendered List View (fallback, mobile < 900px, print, and list mode) -->
+        <div id="timeline-list-view" class="timeline-list-view-block">
+          <TimelineList locale={locale} />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Progressive enhancement client script for Desktop Timeline Island
+  import {
+    TIMELINE_START_YEAR,
+    TIMELINE_END_YEAR,
+    yearToX,
+    xToYear,
+    snapToMonth,
+    formatDecimalYear,
+    getActiveEntriesAtYear,
+    type NormalizedTimelineEntry,
+  } from '../lib/timeline-math';
+
+  const island = document.getElementById('desktop-timeline-app');
+  if (island) {
+    const rawConfig = island.getAttribute('data-config');
+    if (rawConfig) {
+      const config = JSON.parse(rawConfig);
+      initDesktopTimeline(island, config);
+    }
+  }
+
+  // View toggle handlers
+  const btnChart = document.getElementById('btn-view-chart');
+  const btnList = document.getElementById('btn-view-list');
+  const islandEl = document.getElementById('desktop-timeline-app');
+  const listEl = document.getElementById('timeline-list-view');
+
+  function setViewMode(mode: 'chart' | 'list') {
+    if (mode === 'chart') {
+      btnChart?.classList.add('active');
+      btnChart?.setAttribute('aria-checked', 'true');
+      btnList?.classList.remove('active');
+      btnList?.setAttribute('aria-checked', 'false');
+      if (islandEl) islandEl.style.display = 'block';
+      if (listEl) listEl.style.display = 'none';
+    } else {
+      btnList?.classList.add('active');
+      btnList?.setAttribute('aria-checked', 'true');
+      btnChart?.classList.remove('active');
+      btnChart?.setAttribute('aria-checked', 'false');
+      if (islandEl) islandEl.style.display = 'none';
+      if (listEl) listEl.style.display = 'block';
+    }
+  }
+
+  btnChart?.addEventListener('click', () => setViewMode('chart'));
+  btnList?.addEventListener('click', () => setViewMode('list'));
+
+  function initDesktopTimeline(container: HTMLElement, config: any) {
+    const { locale, lanes, dataset, ui } = config;
+
+    const svg = container.querySelector<SVGSVGElement>('#timeline-svg')!;
+    const chartWrapper = container.querySelector<HTMLElement>('#timeline-chart-wrapper')!;
+    const playheadBadge = container.querySelector<HTMLElement>('#playhead-badge')!;
+    const playheadDateLabel = container.querySelector<HTMLElement>('#playhead-date-label')!;
+    const playheadPinIndicator = container.querySelector<HTMLElement>('#playhead-pin-indicator')!;
+    const panelCurrentDate = container.querySelector<HTMLElement>('#panel-current-date')!;
+    const panelCountBadge = container.querySelector<HTMLElement>('#panel-count-badge')!;
+    const panelEntriesList = container.querySelector<HTMLElement>('#panel-active-entries')!;
+    const announcer = container.querySelector<HTMLElement>('#timeline-live-announcer')!;
+
+    // State
+    const activeLanes = new Set<string>(lanes.map((l: any) => l.id));
+    const now = new Date();
+    const currentYearDecimal = now.getFullYear() + (now.getMonth() + 0.5) / 12;
+    let playheadDate = snapToMonth(currentYearDecimal);
+    let isPinned = false;
+    let pinnedItemId: string | null = null;
+    let expandedItemIds = new Set<string>();
+
+    const GUTTER_WIDTH = 130;
+    const ROW_HEIGHT = 28;
+    const HEADER_HEIGHT = 32;
+
+    function render() {
+      const containerWidth = chartWrapper.clientWidth || 900;
+      const chartWidth = containerWidth - GUTTER_WIDTH - 20;
+
+      // Filter visible lanes in order
+      const visibleLanes = lanes.filter((l: any) => activeLanes.has(l.id));
+
+      // Calculate total chart height
+      let currentY = HEADER_HEIGHT;
+      const laneYMap = new Map<string, { y: number; height: number }>();
+
+      for (const lane of visibleLanes) {
+        // Find max subRows for this lane
+        const laneEntries = dataset.filter((d: NormalizedTimelineEntry) => d.lane === lane.id);
+        const subRows = laneEntries.length > 0 ? laneEntries[0].totalSubRows : 1;
+        const laneHeight = Math.max(ROW_HEIGHT, subRows * 18 + 10);
+        laneYMap.set(lane.id, { y: currentY, height: laneHeight });
+        currentY += laneHeight + 6;
+      }
+
+      const totalHeight = currentY + 16;
+      svg.setAttribute('viewBox', `0 0 ${containerWidth} ${totalHeight}`);
+      svg.setAttribute('height', `${totalHeight}px`);
+
+      // Clear SVG
+      svg.innerHTML = '';
+
+      // Create SVG subgroups
+      const gGrid = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      const gLanes = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      const gItems = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      const gPlayhead = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+      svg.appendChild(gGrid);
+      svg.appendChild(gLanes);
+      svg.appendChild(gItems);
+      svg.appendChild(gPlayhead);
+
+      // Draw X-axis grid lines and labels
+      const startInt = Math.floor(TIMELINE_START_YEAR);
+      const endInt = Math.ceil(TIMELINE_END_YEAR);
+
+      for (let yr = startInt; yr <= endInt; yr++) {
+        const x = GUTTER_WIDTH + yearToX(yr, chartWidth);
+
+        // Tick mark
+        const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tick.setAttribute('x1', `${x}`);
+        tick.setAttribute('y1', `${HEADER_HEIGHT - 6}`);
+        tick.setAttribute('x2', `${x}`);
+        tick.setAttribute('y2', `${HEADER_HEIGHT}`);
+        tick.setAttribute('stroke', 'var(--rule)');
+        tick.setAttribute('stroke-width', '1');
+        gGrid.appendChild(tick);
+
+        // Background subtle grid line
+        const gridLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        gridLine.setAttribute('x1', `${x}`);
+        gridLine.setAttribute('y1', `${HEADER_HEIGHT}`);
+        gridLine.setAttribute('x2', `${x}`);
+        gridLine.setAttribute('y2', `${totalHeight - 10}`);
+        gridLine.setAttribute('stroke', 'var(--rule-subtle)');
+        gridLine.setAttribute('stroke-width', '1');
+        gGrid.appendChild(gridLine);
+
+        // Labels every 5 years + current year
+        const isCurrent = yr === now.getFullYear();
+        if (yr % 5 === 0 || isCurrent) {
+          const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          txt.setAttribute('x', `${x}`);
+          txt.setAttribute('y', `${HEADER_HEIGHT - 12}`);
+          txt.setAttribute('text-anchor', 'middle');
+          txt.setAttribute('font-family', 'var(--font-mono)');
+          txt.setAttribute('font-size', '11');
+          txt.setAttribute('fill', isCurrent ? 'var(--ink)' : 'var(--muted)');
+          if (isCurrent) txt.setAttribute('font-weight', 'bold');
+          txt.textContent = `${yr}`;
+          gGrid.appendChild(txt);
+        }
+      }
+
+      // Draw Swimlanes
+      for (const lane of visibleLanes) {
+        const laneLayout = laneYMap.get(lane.id)!;
+
+        // Lane label in left gutter
+        const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        lbl.setAttribute('x', '10');
+        lbl.setAttribute('y', `${laneLayout.y + 15}`);
+        lbl.setAttribute('font-family', 'var(--font-mono)');
+        lbl.setAttribute('font-size', '11');
+        lbl.setAttribute('font-weight', '500');
+        lbl.setAttribute('fill', `var(--lane-${lane.id})`);
+        lbl.textContent = lane[locale];
+        gLanes.appendChild(lbl);
+
+        // Lane track background
+        const track = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        track.setAttribute('x', `${GUTTER_WIDTH}`);
+        track.setAttribute('y', `${laneLayout.y}`);
+        track.setAttribute('width', `${chartWidth}`);
+        track.setAttribute('height', `${laneLayout.height}`);
+        track.setAttribute('fill', 'var(--rule-subtle)');
+        track.setAttribute('rx', '2');
+        gLanes.appendChild(track);
+      }
+
+      // Draw Items
+      for (const entry of dataset) {
+        if (!activeLanes.has(entry.lane)) continue;
+        const laneLayout = laneYMap.get(entry.lane);
+        if (!laneLayout) continue;
+
+        const subRowY = laneLayout.y + 4 + entry.subRow * 16;
+        const color = `var(--lane-${entry.lane})`;
+
+        if (entry.isRange) {
+          const x1 = GUTTER_WIDTH + yearToX(entry.start, chartWidth);
+          const x2 = GUTTER_WIDTH + yearToX(entry.end, chartWidth);
+          const barWidth = Math.max(6, x2 - x1);
+
+          // Solid range bar
+          const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          bar.setAttribute('x', `${x1}`);
+          bar.setAttribute('y', `${subRowY}`);
+          bar.setAttribute('width', `${barWidth}`);
+          bar.setAttribute('height', '8');
+          bar.setAttribute('rx', '4');
+          bar.setAttribute('fill', color);
+          bar.setAttribute('class', `timeline-bar ${pinnedItemId === entry.id ? 'is-pinned' : ''}`);
+          bar.style.cursor = 'pointer';
+
+          bar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            pinnedItemId = entry.id;
+            expandedItemIds.add(entry.id);
+            isPinned = true;
+            playheadDate = snapToMonth(entry.start);
+            updatePlayhead();
+            updatePanel();
+          });
+
+          gItems.appendChild(bar);
+
+          // If expected segment exists (e.g. PhD expected segment to May 2027) -> draw dotted!
+          if (entry.endExpected && entry.endExpected > entry.end) {
+            const xExp = GUTTER_WIDTH + yearToX(entry.endExpected, chartWidth);
+            const dottedLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            dottedLine.setAttribute('x1', `${x2}`);
+            dottedLine.setAttribute('y1', `${subRowY + 4}`);
+            dottedLine.setAttribute('x2', `${xExp}`);
+            dottedLine.setAttribute('y2', `${subRowY + 4}`);
+            dottedLine.setAttribute('stroke', color);
+            dottedLine.setAttribute('stroke-width', '3');
+            dottedLine.setAttribute('stroke-dasharray', '4,3');
+            dottedLine.setAttribute('stroke-linecap', 'round');
+            gItems.appendChild(dottedLine);
+          }
+        } else {
+          // Point or publication
+          const cx = GUTTER_WIDTH + yearToX(entry.start, chartWidth);
+          const cy = subRowY + 4;
+
+          const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          dot.setAttribute('cx', `${cx}`);
+          dot.setAttribute('cy', `${cy}`);
+          dot.setAttribute('r', '4');
+          dot.setAttribute('fill', color);
+          dot.setAttribute('class', `timeline-dot ${pinnedItemId === entry.id ? 'is-pinned' : ''}`);
+          dot.style.cursor = 'pointer';
+
+          dot.addEventListener('click', (e) => {
+            e.stopPropagation();
+            pinnedItemId = entry.id;
+            expandedItemIds.add(entry.id);
+            isPinned = true;
+            playheadDate = snapToMonth(entry.start);
+            updatePlayhead();
+            updatePanel();
+          });
+
+          gItems.appendChild(dot);
+        }
+      }
+
+      // Draw Playhead Line
+      const playheadX = GUTTER_WIDTH + yearToX(playheadDate, chartWidth);
+
+      const playheadLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      playheadLine.setAttribute('id', 'svg-playhead-line');
+      playheadLine.setAttribute('x1', `${playheadX}`);
+      playheadLine.setAttribute('y1', `${HEADER_HEIGHT - 6}`);
+      playheadLine.setAttribute('x2', `${playheadX}`);
+      playheadLine.setAttribute('y2', `${totalHeight - 6}`);
+      playheadLine.setAttribute('stroke', 'var(--ink)');
+      playheadLine.setAttribute('stroke-width', '1.5');
+      playheadLine.setAttribute('stroke-dasharray', isPinned ? 'none' : '2,2');
+      gPlayhead.appendChild(playheadLine);
+
+      updatePlayheadBadge(playheadX);
+    }
+
+    function updatePlayhead() {
+      const containerWidth = chartWrapper.clientWidth || 900;
+      const chartWidth = containerWidth - GUTTER_WIDTH - 20;
+      const playheadX = GUTTER_WIDTH + yearToX(playheadDate, chartWidth);
+
+      const line = svg.querySelector<SVGLineElement>('#svg-playhead-line');
+      if (line) {
+        line.setAttribute('x1', `${playheadX}`);
+        line.setAttribute('x2', `${playheadX}`);
+        line.setAttribute('stroke-dasharray', isPinned ? 'none' : '2,2');
+      }
+
+      updatePlayheadBadge(playheadX);
+    }
+
+    function updatePlayheadBadge(playheadX: number) {
+      const dateText = formatDecimalYear(playheadDate, locale);
+      playheadDateLabel.textContent = dateText;
+      playheadBadge.style.left = `${playheadX}px`;
+      playheadPinIndicator.style.display = isPinned ? 'inline' : 'none';
+    }
+
+    function updatePanel() {
+      const activeEntries = getActiveEntriesAtYear(dataset, playheadDate)
+        .filter((entry) => activeLanes.has(entry.lane));
+
+      const dateText = formatDecimalYear(playheadDate, locale);
+      panelCurrentDate.textContent = dateText;
+      panelCountBadge.textContent = `${activeEntries.length} ${locale === 'pt' ? 'ativos' : 'active'}`;
+
+      // Announce for assistive tech
+      if (announcer) {
+        announcer.textContent = `${dateText}: ${activeEntries.length} items active`;
+      }
+
+      // Group active entries by lane
+      panelEntriesList.innerHTML = '';
+
+      if (activeEntries.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'panel-empty';
+        empty.textContent = locale === 'pt' ? 'Nenhuma atividade registrada neste ponto.' : 'No active entries recorded at this timestamp.';
+        panelEntriesList.appendChild(empty);
+        return;
+      }
+
+      for (const entry of activeEntries) {
+        const isExpanded = expandedItemIds.has(entry.id) || pinnedItemId === entry.id;
+
+        const card = document.createElement('article');
+        card.className = `panel-entry-card ${isExpanded ? 'expanded' : ''}`;
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+        card.style.borderLeftColor = `var(--lane-${entry.lane})`;
+
+        const header = document.createElement('div');
+        header.className = 'card-header';
+
+        const lanePip = document.createElement('span');
+        lanePip.className = 'card-lane-pip';
+        lanePip.style.backgroundColor = `var(--lane-${entry.lane})`;
+
+        const roleTitle = document.createElement('h4');
+        roleTitle.className = 'card-title';
+        roleTitle.textContent = entry.isPublication ? (entry.title || '') : (entry.role || entry.org || '');
+
+        header.appendChild(lanePip);
+        header.appendChild(roleTitle);
+        card.appendChild(header);
+
+        if (entry.org && !entry.isPublication) {
+          const orgEl = document.createElement('div');
+          orgEl.className = 'card-org';
+          orgEl.textContent = entry.org;
+          card.appendChild(orgEl);
+        }
+
+        if (isExpanded) {
+          const detail = document.createElement('div');
+          detail.className = 'card-detail';
+
+          if (entry.summary) {
+            const sumEl = document.createElement('p');
+            sumEl.className = 'card-summary';
+            sumEl.textContent = entry.summary;
+            detail.appendChild(sumEl);
+          }
+
+          if (entry.advisor) {
+            const adv = document.createElement('div');
+            adv.className = 'card-extra';
+            adv.innerHTML = `<strong>${ui.advisor}:</strong> ${entry.advisor}`;
+            detail.appendChild(adv);
+          }
+
+          if (entry.thesis) {
+            const th = document.createElement('div');
+            advThesis: {
+              const thEl = document.createElement('div');
+              thEl.className = 'card-extra';
+              thEl.innerHTML = `<strong>${ui.thesis}:</strong> ${entry.thesis}`;
+              detail.appendChild(thEl);
+            }
+          }
+
+          if (entry.isPublication && entry.venue) {
+            const v = document.createElement('div');
+            v.className = 'card-extra';
+            v.innerHTML = `<strong>Venue:</strong> ${entry.venue}`;
+            detail.appendChild(v);
+          }
+
+          card.appendChild(detail);
+        }
+
+        // Click / Enter interaction
+        const toggleItem = () => {
+          if (expandedItemIds.has(entry.id)) {
+            expandedItemIds.delete(entry.id);
+            if (pinnedItemId === entry.id) pinnedItemId = null;
+          } else {
+            expandedItemIds.add(entry.id);
+            pinnedItemId = entry.id;
+          }
+          updatePanel();
+        };
+
+        card.addEventListener('click', toggleItem);
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleItem();
+          }
+        });
+
+        panelEntriesList.appendChild(card);
+      }
+    }
+
+    // Chart pointer scrubbing
+    chartWrapper.addEventListener('mousemove', (e) => {
+      if (isPinned) return;
+      const rect = chartWrapper.getBoundingClientRect();
+      const clientX = e.clientX - rect.left;
+      const chartWidth = (chartWrapper.clientWidth || 900) - GUTTER_WIDTH - 20;
+      const xInChart = clientX - GUTTER_WIDTH;
+
+      if (xInChart >= 0 && xInChart <= chartWidth) {
+        const year = xToYear(xInChart, chartWidth);
+        playheadDate = snapToMonth(year);
+        updatePlayhead();
+        updatePanel();
+      }
+    });
+
+    chartWrapper.addEventListener('click', (e) => {
+      const rect = chartWrapper.getBoundingClientRect();
+      const clientX = e.clientX - rect.left;
+      const chartWidth = (chartWrapper.clientWidth || 900) - GUTTER_WIDTH - 20;
+      const xInChart = clientX - GUTTER_WIDTH;
+
+      if (xInChart >= 0 && xInChart <= chartWidth) {
+        isPinned = !isPinned;
+        if (isPinned) {
+          const year = xToYear(xInChart, chartWidth);
+          playheadDate = snapToMonth(year);
+        }
+        updatePlayhead();
+        updatePanel();
+      }
+    });
+
+    // Keyboard support: Chart is one tab stop
+    chartWrapper.addEventListener('keydown', (e) => {
+      let handled = false;
+      if (e.key === 'ArrowLeft') {
+        const step = e.shiftKey ? 1.0 : 1 / 12;
+        playheadDate = Math.max(TIMELINE_START_YEAR, snapToMonth(playheadDate - step));
+        handled = true;
+      } else if (e.key === 'ArrowRight') {
+        const step = e.shiftKey ? 1.0 : 1 / 12;
+        playheadDate = Math.min(TIMELINE_END_YEAR, snapToMonth(playheadDate + step));
+        handled = true;
+      } else if (e.key === 'Home') {
+        playheadDate = snapToMonth(TIMELINE_START_YEAR);
+        handled = true;
+      } else if (e.key === 'End') {
+        playheadDate = snapToMonth(currentYearDecimal);
+        handled = true;
+      } else if (e.key === 'Enter') {
+        isPinned = !isPinned;
+        handled = true;
+      }
+
+      if (handled) {
+        e.preventDefault();
+        updatePlayhead();
+        updatePanel();
+      }
+    });
+
+    // Lane legend toggles
+    const legendBtns = container.querySelectorAll<HTMLButtonElement>('.legend-lane-btn');
+    legendBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const laneId = btn.getAttribute('data-lane');
+        if (!laneId) return;
+
+        if (activeLanes.has(laneId)) {
+          if (activeLanes.size > 1) { // Keep at least one lane
+            activeLanes.delete(laneId);
+            btn.classList.add('inactive');
+            btn.setAttribute('aria-pressed', 'false');
+          }
+        } else {
+          activeLanes.add(laneId);
+          btn.classList.remove('inactive');
+          btn.setAttribute('aria-pressed', 'true');
+        }
+
+        render();
+        updatePanel();
+      });
+    });
+
+    // Initial render
+    render();
+    updatePanel();
+
+    window.addEventListener('resize', () => {
+      render();
+    });
+  }
+</script>
+
+<style>
+  .timeline-section {
+    position: relative;
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
+  .timeline-container {
+    width: 100%;
+  }
+
+  .timeline-main-column {
+    min-width: 0;
+  }
+
+  /* View toggle controls */
+  .timeline-view-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+  }
+
+  .view-toggle-group {
+    display: inline-flex;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 2px;
+    background: transparent;
+  }
+
+  .view-toggle-btn {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.25rem 0.65rem;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all var(--transition-fast);
+  }
+
+  .view-toggle-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    font-weight: 500;
+  }
+
+  /* Desktop timeline island */
+  .desktop-timeline-island {
+    width: 100%;
+  }
+
+  /* Lane legend */
+  .timeline-legend-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.85rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .legend-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-right: 0.25rem;
+  }
+
+  .legend-lane-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 180ms ease;
+  }
+
+  .legend-lane-btn:hover {
+    border-color: var(--ink);
+  }
+
+  .legend-lane-btn.inactive {
+    opacity: 0.4;
+    border-color: var(--rule);
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+
+  .legend-pip {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+
+  /* Chart wrapper */
+  .chart-wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: hidden;
+    user-select: none;
+    padding-top: 1.75rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--paper);
+    transition: border-color var(--transition-fast);
+  }
+
+  .chart-wrapper:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .playhead-badge {
+    position: absolute;
+    top: 6px;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 0.15rem 0.45rem;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 2px;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 10;
+    transition: left 60ms linear;
+  }
+
+  .pin-indicator {
+    font-size: 9px;
+    opacity: 0.8;
+    margin-left: 0.25rem;
+  }
+
+  .timeline-svg {
+    display: block;
+    width: 100%;
+  }
+
+  /* "At this point" Panel */
+  .at-this-point-panel {
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 1.5rem 2rem;
+    background: transparent;
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .panel-title-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .panel-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+
+  .panel-date {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .panel-count {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--muted);
+  }
+
+  .panel-entries-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .panel-empty {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--muted);
+    grid-column: 1 / -1;
+  }
+
+  .panel-entry-card {
+    border-left: 2px solid var(--rule);
+    padding: 0.5rem 0 0.5rem 0.85rem;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+  }
+
+  .panel-entry-card:hover {
+    background-color: var(--rule-subtle);
+  }
+
+  .panel-entry-card:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .card-lane-pip {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+
+  .card-org {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--muted);
+    margin-top: 0.25rem;
+  }
+
+  .card-detail {
+    margin-top: 0.65rem;
+    padding-top: 0.65rem;
+    border-top: 1px dashed var(--rule);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .card-summary {
+    margin-bottom: 0.5rem;
+  }
+
+  .card-extra {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    margin-top: 0.25rem;
+  }
+
+  /* Responsive visibility */
+  .timeline-list-view-block {
+    display: none;
+  }
+
+  @media (max-width: 899px) {
+    .timeline-view-controls {
+      display: none;
+    }
+
+    .desktop-timeline-island {
+      display: none !important;
+    }
+
+    .timeline-list-view-block {
+      display: block !important;
+    }
+  }
+
+  /* Screen reader only utility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

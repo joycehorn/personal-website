@@ -105,14 +105,14 @@ server.listen(8089, async () => {
   await send('DOM.enable');
 
   const tasks = [
-    { name: 'en-desktop-light', url: 'http://localhost:8089/?theme=light', width: 1280, height: 2600, mobile: false, theme: 'light' },
-    { name: 'en-desktop-dark', url: 'http://localhost:8089/?theme=dark', width: 1280, height: 2600, mobile: false, theme: 'dark' },
-    { name: 'en-mobile-light', url: 'http://localhost:8089/?theme=light', width: 375, height: 3800, mobile: true, theme: 'light' },
-    { name: 'en-mobile-dark', url: 'http://localhost:8089/?theme=dark', width: 375, height: 3800, mobile: true, theme: 'dark' },
-    { name: 'pt-desktop-light', url: 'http://localhost:8089/pt/?theme=light', width: 1280, height: 2600, mobile: false, theme: 'light' },
-    { name: 'pt-desktop-dark', url: 'http://localhost:8089/pt/?theme=dark', width: 1280, height: 2600, mobile: false, theme: 'dark' },
-    { name: 'pt-mobile-light', url: 'http://localhost:8089/pt/?theme=light', width: 375, height: 3800, mobile: true, theme: 'light' },
-    { name: 'pt-mobile-dark', url: 'http://localhost:8089/pt/?theme=dark', width: 375, height: 3800, mobile: true, theme: 'dark' },
+    { name: 'en-desktop-light', url: 'http://localhost:8089/?theme=light', width: 1280, height: 3800, mobile: false, theme: 'light' },
+    { name: 'en-desktop-dark', url: 'http://localhost:8089/?theme=dark', width: 1280, height: 3800, mobile: false, theme: 'dark' },
+    { name: 'en-mobile-light', url: 'http://localhost:8089/?theme=light', width: 375, height: 5000, mobile: true, theme: 'light' },
+    { name: 'en-mobile-dark', url: 'http://localhost:8089/?theme=dark', width: 375, height: 5000, mobile: true, theme: 'dark' },
+    { name: 'pt-desktop-light', url: 'http://localhost:8089/pt/?theme=light', width: 1280, height: 3800, mobile: false, theme: 'light' },
+    { name: 'pt-desktop-dark', url: 'http://localhost:8089/pt/?theme=dark', width: 1280, height: 3800, mobile: false, theme: 'dark' },
+    { name: 'pt-mobile-light', url: 'http://localhost:8089/pt/?theme=light', width: 375, height: 5000, mobile: true, theme: 'light' },
+    { name: 'pt-mobile-dark', url: 'http://localhost:8089/pt/?theme=dark', width: 375, height: 5000, mobile: true, theme: 'dark' },
   ];
 
   for (const t of tasks) {
@@ -141,10 +141,11 @@ server.listen(8089, async () => {
 
     await new Promise((r) => setTimeout(r, 300));
 
-    // Capture screenshot
+    // Capture full-page screenshot
     const screenshot = await send('Page.captureScreenshot', {
       format: 'png',
-      fromSurface: true
+      fromSurface: true,
+      captureBeyondViewport: true
     });
 
     const buffer = Buffer.from(screenshot.data, 'base64');

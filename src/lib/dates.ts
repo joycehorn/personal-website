@@ -55,16 +55,4 @@ export function formatDateRange(
   return startFormatted || endFormatted;
 }
 
-export function parseYearMonthToDecimal(dateStr: string): number {
-  if (dateStr.toLowerCase() === 'present') {
-    const now = new Date();
-    return now.getFullYear() + (now.getMonth() + 0.5) / 12;
-  }
-  const parts = dateStr.split('-');
-  const year = parseInt(parts[0], 10);
-  if (parts.length === 1) {
-    return year + 0.5; // midpoint of the year
-  }
-  const month = parseInt(parts[1], 10);
-  return year + (month - 0.5) / 12;
-}
+export { parseYearMonthToDecimal } from './timeline-math';
