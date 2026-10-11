@@ -1,6 +1,6 @@
 # Deployment & Domain Guide
 
-This document contains step-by-step instructions to deploy the website from your GitHub repository, configure DNS records at GoDaddy for both domains (`joycehornfonteles.com` and `hornfonteles.com`), set up automatic HTTPS with `www` redirecting to the apex, and configure free email forwarding so `joyce@hornfonteles.com` (and `joyce@joycehornfonteles.com`) seamlessly reach your personal Gmail.
+This document contains step-by-step instructions to deploy your website from GitHub, configure DNS records at GoDaddy for both domains (`joycehornfonteles.com` and `hornfonteles.com`), set up automatic HTTPS with `www` redirecting to the apex, and configure free email forwarding so `joyce@hornfonteles.com` (and `joyce@joycehornfonteles.com`) reach your personal Gmail.
 
 ---
 
@@ -11,172 +11,148 @@ This document contains step-by-step instructions to deploy the website from your
 | **Primary Website Domain** | `https://joycehornfonteles.com` |
 | **Secondary Domain (Redirect & Email)** | `hornfonteles.com` |
 | **Contact Email** | `joyce@hornfonteles.com` |
-| **Recommended Host** | **Cloudflare Pages** (Free, global CDN, native Node 22 support, free Email Routing, 1-click apex flattening) |
-| **Alternative Host** | **Netlify** |
+| **Hosting Options** | **GitHub Pages** (Built into your repo, zero cost) OR **Cloudflare Pages** (Free, includes email routing) |
 | **Domain Registrar** | **GoDaddy** |
 
 ---
 
-## 2. Deploying to Cloudflare Pages (Recommended)
+## 2. Option A: Deploying to GitHub Pages (`github.io`)
+
+Because this website is a modern, 100% static Astro site, **GitHub Pages supports it natively**. 
+
+A ready-to-use GitHub Actions workflow is already created in `.github/workflows/deploy.yml`.
 
 ### Step 2.1: Push Code to GitHub
-1. Create a private or public repository on GitHub (e.g. `joyce-academic-site`).
-2. In your local terminal, add the remote and push `main`:
+1. Create a repository on GitHub (e.g. `joyce-academic-site` or `<your-username>.github.io`).
+2. Push your project to GitHub:
    ```bash
-   git remote add origin git@github.com:YOUR_USERNAME/joyce-academic-site.git
+   git remote add origin git@github.com:YOUR_USERNAME/YOUR_REPO.git
    git branch -M main
    git push -u origin main
    ```
 
-### Step 2.2: Connect Cloudflare Pages
-1. Log in to your [Cloudflare Dashboard](https://dash.cloudflare.com/).
-2. In the left navigation, click **Workers & Pages** → **Create application** → select the **Pages** tab → **Connect to Git**.
-3. Authorize GitHub and select your repository.
-4. Configure the build settings:
-   - **Project name:** `joycehornfonteles`
-   - **Production branch:** `main`
+### Step 2.2: Enable GitHub Pages in Repository Settings
+1. On GitHub, go to your repository → **Settings** → **Pages** (in the left sidebar under "Code and automation").
+2. Under **Build and deployment** → **Source**, select **GitHub Actions**.
+3. Every time you push to `main`, GitHub Actions will automatically:
+   - Run Node 22
+   - Build the site (`npm run build`)
+   - Deploy the static assets to GitHub Pages.
+
+### Step 2.3: Set Custom Domain in GitHub Pages
+1. Under **Custom domain**, enter: `joycehornfonteles.com`.
+2. Click **Save**.
+   *(GitHub creates a `CNAME` record in the deployment and starts DNS verification).*
+3. Once DNS resolves (see GoDaddy steps below), check **Enforce HTTPS** (GitHub will provision a free Let's Encrypt SSL certificate automatically).
+
+### Step 2.4: GoDaddy DNS Records for GitHub Pages
+
+In your GoDaddy DNS management for **`joycehornfonteles.com`**:
+
+#### A. Apex Root Records (Points `joycehornfonteles.com` to GitHub's Anycast IP addresses):
+Add four **A** records with Name `@`:
+
+| Type | Name | Value / Points to | TTL |
+|---|---|---|---|
+| **A** | `@` | `185.199.108.153` | 1 Hour |
+| **A** | `@` | `185.199.109.153` | 1 Hour |
+| **A** | `@` | `185.199.110.153` | 1 Hour |
+| **A** | `@` | `185.199.111.153` | 1 Hour |
+
+#### B. Subdomain Record (Points `www.joycehornfonteles.com` to your GitHub Pages domain):
+Add one **CNAME** record:
+
+| Type | Name | Value / Points to | TTL |
+|---|---|---|---|
+| **CNAME** | `www` | `<YOUR-GITHUB-USERNAME>.github.io` | 1 Hour |
+
+> [!NOTE]
+> GitHub Pages automatically redirects `www.joycehornfonteles.com` to `https://joycehornfonteles.com` when you set `joycehornfonteles.com` as the custom domain.
+
+---
+
+## 3. Option B: Deploying to Cloudflare Pages
+
+If you prefer Cloudflare Pages:
+1. Log in to [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Workers & Pages** → **Create application** → **Pages** → **Connect to Git**.
+2. Select your repository and set:
    - **Framework preset:** `Astro`
    - **Build command:** `npm run build`
    - **Build output directory:** `dist`
-5. Under **Environment variables**, ensure Node 22 is used:
-   - Variable name: `NODE_VERSION`
-   - Value: `22`
-6. Click **Save and Deploy**. Cloudflare will build the site in ~30 seconds and provide a `*.pages.dev` preview URL.
+   - **Environment variable:** `NODE_VERSION: 22`
+3. Click **Save and Deploy**.
+4. In **Custom domains**, add `joycehornfonteles.com` and `www.joycehornfonteles.com`.
 
 ---
 
-## 3. GoDaddy DNS Configuration
+## 4. Free Email Forwarding (`joyce@hornfonteles.com` → Gmail)
 
-You own two domains at GoDaddy:
-1. `joycehornfonteles.com` (Main Website)
-2. `hornfonteles.com` (Email & Alias Redirect)
+GitHub Pages hosts websites, but does not provide email routing. You can route emails for free using **Cloudflare Email Routing** or **ImprovMX / Forward Email**.
 
-There are two approaches:
-- **Method A (Recommended): Delegate Nameservers to Cloudflare** — GoDaddy remains your domain registrar, but Cloudflare manages the DNS. This gives you 100% automated SSL certificates, zero-config apex CNAME flattening, free email routing, and instant rule execution.
-- **Method B: Keep GoDaddy Nameservers and set manual DNS records**.
+The cleanest setup (even when hosting the website on GitHub Pages) is using **Cloudflare for DNS & Email Routing**:
+- GoDaddy remains your domain registrar.
+- Cloudflare manages DNS (it points web traffic to GitHub Pages and handles email routing to Gmail).
 
----
-
-### Method A: Cloudflare DNS (Simplest & Most Reliable)
-
-1. In Cloudflare, click **Add a site** → enter `joycehornfonteles.com` → choose the **Free** plan.
-2. Repeat for `hornfonteles.com`.
-3. Cloudflare will scan existing records and provide two nameservers (e.g., `ada.ns.cloudflare.com` and `bob.ns.cloudflare.com`).
-4. Log into [GoDaddy Domain Portfolio](https://dcc.godaddy.com/control/portfolio):
-   - Click **`joycehornfonteles.com`** → **DNS** → **Nameservers** → **Change Nameservers**.
-   - Select **I'll use my own nameservers** and paste Cloudflare's two nameservers.
-   - Repeat for **`hornfonteles.com`**.
-5. Back in Cloudflare Pages:
-   - Go to your Pages project → **Custom domains** → **Set up a domain**.
-   - Enter `joycehornfonteles.com` → Click **Activate domain**.
-   - Enter `www.joycehornfonteles.com` → Click **Activate domain**.
-   Cloudflare automatically handles apex flattening, creates DNS records, provisions SSL certificates, and handles `www` redirection.
-
----
-
-### Method B: Keeping GoDaddy Nameservers (Manual Records)
-
-If you prefer to keep GoDaddy's default nameservers:
-
-#### 1. Records for `joycehornfonteles.com` in GoDaddy DNS:
-
-| Type | Name / Host | Value / Points to | TTL | Purpose |
-|---|---|---|---|---|
-| **CNAME** | `www` | `<your-project>.pages.dev` | 1 Hour / Auto | Points `www` to Cloudflare Pages |
-| **A** | `@` | (Cloudflare Pages IP or GoDaddy Forwarding) | 1 Hour | See forwarding below |
+### Setting up Free Cloudflare Email Routing:
+1. In Cloudflare, add your domains (`hornfonteles.com` and `joycehornfonteles.com`) on the **Free** plan.
+2. In the GoDaddy dashboard, update nameservers to Cloudflare's two nameservers.
+3. In Cloudflare for **`hornfonteles.com`**:
+   - Go to **Email** → **Email Routing**.
+   - Under **Destination addresses**, add your personal Gmail address and click the verification link sent to your inbox.
+   - Under **Routing rules**, create custom address: `joyce` @ `hornfonteles.com` → Action: `Send to` → Destination: `yourname@gmail.com`.
+   - Click **Add records automatically**. Cloudflare adds the necessary MX and SPF records:
+     - `MX @ isaac.mx.cloudflare.net (Priority 13)`
+     - `MX @ linda.mx.cloudflare.net (Priority 55)`
+     - `MX @ amir.mx.cloudflare.net (Priority 74)`
+     - `TXT @ v=spf1 include:_spf.mx.cloudflare.net ~all`
+4. In Cloudflare for **`joycehornfonteles.com`**:
+   - Web traffic: Add a CNAME pointing to `<YOUR-USERNAME>.github.io`.
+   - Email traffic: You can optionally add `joyce@joycehornfonteles.com` forwarding to your Gmail as well!
 
 > [!IMPORTANT]
-> Because standard DNS specifications do not allow a CNAME record at the apex root (`@`), and GoDaddy DNS does not support native ANAME/ALIAS flattening, the standard GoDaddy method is:
-> 1. Set the **CNAME** for `www` to `<your-project>.pages.dev`.
-> 2. In GoDaddy's **Domain Settings** for `joycehornfonteles.com`, scroll to **Forwarding** → **Add Forwarding**:
->    - Forward `@` to `https://www.joycehornfonteles.com`
->    - Redirect type: **301 (Permanent)**
->    - Forward with masking: **No (Forward only)**
->
-> *(Note: Using Method A with Cloudflare nameservers avoids this workaround entirely and serves the website directly at the clean apex `https://joycehornfonteles.com`)*.
+> **MX** and **TXT (SPF)** records for email operate completely independently from web **A** and **CNAME** records. Your email and your GitHub Pages website will run smoothly side by side with zero conflicts.
 
 ---
 
-## 4. Redirecting `www` to Apex (and Secondary Domain)
+## 5. Redirecting `hornfonteles.com` to `joycehornfonteles.com`
 
-To ensure visitors who type `www.joycehornfonteles.com` or `hornfonteles.com` cleanly land on `https://joycehornfonteles.com`:
+Since you own both domains, you want visitors who type `hornfonteles.com` to land on `https://joycehornfonteles.com`:
 
-### In Cloudflare (Workers & Pages or Redirect Rules):
-1. In Cloudflare Dashboard, select `joycehornfonteles.com` → **Rules** → **Redirect Rules** → **Create rule**.
-2. **Rule name:** `Redirect WWW to Apex`
-3. When incoming requests match:
-   - Field: `Hostname`
-   - Operator: `equals`
-   - Value: `www.joycehornfonteles.com`
-4. Then redirect to:
-   - Type: `Dynamic`
-   - Expression: `concat("https://joycehornfonteles.com", http.request.uri.path)`
-   - Status code: `301 (Moved Permanently)`
-5. For `hornfonteles.com`: Create a similar redirect rule forwarding all traffic to `https://joycehornfonteles.com`.
+### If using Cloudflare DNS:
+- Go to `hornfonteles.com` → **Rules** → **Redirect Rules** → **Create rule**:
+  - Name: `Redirect hornfonteles.com to joycehornfonteles.com`
+  - Field: `Hostname` equals `hornfonteles.com`
+  - Target: `Dynamic` → `concat("https://joycehornfonteles.com", http.request.uri.path)`
+  - Status: `301 (Moved Permanently)`
 
----
-
-## 5. Free Email Forwarding Setup (`joyce@hornfonteles.com` → Gmail)
-
-You can forward all emails sent to `joyce@hornfonteles.com` (and `joyce@joycehornfonteles.com`) directly to your personal Gmail inbox completely free using **Cloudflare Email Routing**.
-
-> [!NOTE]
-> Email DNS records (**MX** and **TXT/SPF**) are entirely separate from website records (**A** and **CNAME**). Setting up email routing will **never** interfere with or break website traffic.
-
-### Step-by-Step Email Routing Setup:
-
-1. In the Cloudflare Dashboard, select **`hornfonteles.com`**.
-2. In the left sidebar, click **Email** → **Email Routing**.
-3. Under **Destination addresses**, click **Add destination address**:
-   - Enter your personal Gmail address (e.g. `yourname@gmail.com`).
-   - Cloudflare will send a verification link to your Gmail. Open Gmail and click **Verify email address**.
-4. Under **Routing rules**, click **Create address**:
-   - Custom address: `joyce` @ `hornfonteles.com`
-   - Action: `Send to`
-   - Destination: `yourname@gmail.com`
-   - Click **Save**.
-5. Enable Email Routing: Cloudflare will ask to add the required DNS records. Click **Add records automatically**.
-
-### The Exact DNS Records Cloudflare Adds for Email:
-
-If adding manually, these are the DNS records for `hornfonteles.com`:
-
-| Type | Name | Content / Value | Priority | Purpose |
-|---|---|---|---|---|
-| **MX** | `@` | `isaac.mx.cloudflare.net` | 13 | Cloudflare Mail Ingestion |
-| **MX** | `@` | `linda.mx.cloudflare.net` | 55 | Cloudflare Mail Ingestion (Backup) |
-| **MX** | `@` | `amir.mx.cloudflare.net` | 74 | Cloudflare Mail Ingestion (Backup) |
-| **TXT** | `@` | `v=spf1 include:_spf.mx.cloudflare.net ~all` | — | SPF validation (prevents spam flags) |
-| **TXT** | `_cf-custom-hostname` | `<cloudflare-verification-code>` | — | Cloudflare domain verification |
-
-*(Optional: You can repeat this process for `joycehornfonteles.com` so any email sent to `joyce@joycehornfonteles.com` also forwards to your Gmail!)*
+### If using GoDaddy DNS:
+- In GoDaddy for `hornfonteles.com`, go to **Domain Settings** → **Forwarding** → **Add Forwarding**:
+  - Forward to: `https://joycehornfonteles.com`
+  - Redirect type: **301 (Permanent)**
 
 ---
 
-## 6. How to Send Emails as `joyce@hornfonteles.com` from Gmail (Optional)
+## 6. How to Send Emails as `joyce@hornfonteles.com` from Gmail
 
-By default, Cloudflare Email Routing handles *incoming* mail. If you want to *reply* or *compose* emails from inside Gmail so recipients see `From: joyce@hornfonteles.com`:
-
-1. Sign up for a free transactional SMTP service such as **Resend** ([resend.com](https://resend.com), 3,000 free emails/month) or **Brevo** (300 free emails/day).
-2. Add `hornfonteles.com` in your SMTP provider and verify DKIM.
+To reply to or compose emails as `joyce@hornfonteles.com` from inside Gmail:
+1. Create a free account at [Resend](https://resend.com) (3,000 free emails/month) or [Brevo](https://brevo.com) (300 free emails/day).
+2. Add and verify `hornfonteles.com` for sending.
 3. In Gmail:
-   - Go to **Settings** (gear icon) → **See all settings** → **Accounts and Import**.
-   - Under **Send mail as**, click **Add another email address**.
+   - Go to **Settings** → **Accounts and Import** → **Send mail as** → **Add another email address**.
    - Name: `Joyce Horn Fonteles`
-   - Email address: `joyce@hornfonteles.com`
-   - Uncheck "Treat as an alias".
-   - Enter the SMTP server, port `587`, username, and API key/password from your provider.
-   - Verify the confirmation code sent to your inbox.
-4. Now, when writing an email in Gmail, you can select `joyce@hornfonteles.com` in the **From** dropdown!
+   - Email: `joyce@hornfonteles.com`
+   - Enter the SMTP server host, port `587`, username, and API key.
+   - Enter the confirmation code sent to your inbox.
+4. Now you can select `joyce@hornfonteles.com` directly in Gmail's "From" field.
 
 ---
 
 ## 7. Pre-Launch Verification Checklist
 
-Before announcing the site, verify:
-- [ ] `https://joycehornfonteles.com` loads over secure HTTPS (padlock icon).
-- [ ] `http://joycehornfonteles.com` redirects automatically to `https://`.
+- [ ] Repository pushed to GitHub with `.github/workflows/deploy.yml` passing.
+- [ ] GitHub Pages custom domain set to `joycehornfonteles.com` with **Enforce HTTPS** checked.
+- [ ] GoDaddy DNS has the 4 GitHub `A` records and `www` CNAME.
+- [ ] `https://joycehornfonteles.com` loads over secure HTTPS.
 - [ ] `www.joycehornfonteles.com` redirects to `https://joycehornfonteles.com`.
-- [ ] Send a test email from an external address to `joyce@hornfonteles.com` and verify it lands in your Gmail within seconds.
-- [ ] Language switch links correctly between `/` ↔ `/pt/` and `/publications` ↔ `/pt/publicacoes`.
-- [ ] Test Open Graph preview with [OpenGraph.xyz](https://www.opengraph.xyz/) or [Twitter Card Validator](https://cards-dev.twitter.com/validator) to confirm the dynamic `og.png` displays.
+- [ ] Test email sent to `joyce@hornfonteles.com` lands in your personal Gmail.
+- [ ] Language switch works between English (`/`, `/publications`) and Portuguese (`/pt/`, `/pt/publicacoes`).
