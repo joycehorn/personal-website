@@ -86,13 +86,14 @@ const entriesByLane = lanes.map((lane) => {
               >
                 <div class="entry-meta">
                   <span class="entry-date">{dateStr}</span>
-                  {entry.org && <span class="entry-org">{entry.org}</span>}
                 </div>
 
                 <div class="entry-body">
                   <h4 class="entry-role">
                     {entry.isPublication ? entry.title : entry.role}
                   </h4>
+
+                  {entry.org && <div class="entry-org">{entry.org}</div>}
 
                   {!entry.isPublication && entry.summary && (
                     <p class="entry-summary">{entry.summary}</p>
@@ -304,13 +305,14 @@ const entriesByLane = lanes.map((lane) => {
     font-family: var(--font-mono);
     font-size: var(--text-mono-sm);
     color: var(--muted);
-    line-height: 1.4;
+    line-height: 1.45;
+    margin-top: -0.25rem;
   }
 
   .entry-body {
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.55rem;
     max-width: var(--col-reading);
   }
 
