@@ -207,7 +207,7 @@ const timelineConfig = {
     let pinnedItemId: string | null = null;
     let expandedItemIds = new Set<string>();
 
-    const GUTTER_WIDTH = 130;
+    const GUTTER_WIDTH = 155;
     const ROW_HEIGHT = 28;
     const HEADER_HEIGHT = 32;
 
@@ -252,6 +252,7 @@ const timelineConfig = {
       // Draw X-axis grid lines and labels
       const startInt = Math.floor(TIMELINE_START_YEAR);
       const endInt = Math.ceil(TIMELINE_END_YEAR);
+      const currentYr = now.getFullYear();
 
       for (let yr = startInt; yr <= endInt; yr++) {
         const x = GUTTER_WIDTH + yearToX(yr, chartWidth);
@@ -276,9 +277,10 @@ const timelineConfig = {
         gridLine.setAttribute('stroke-width', '1');
         gGrid.appendChild(gridLine);
 
-        // Labels every 5 years + current year
-        const isCurrent = yr === now.getFullYear();
-        if (yr % 5 === 0 || isCurrent) {
+        // Labels every 5 years + current year, skipping any 5-year label that collides with current year
+        const isCurrent = yr === currentYr;
+        const collidesWithCurrent = Math.abs(yr - currentYr) <= 1 && yr !== currentYr;
+        if (isCurrent || (yr % 5 === 0 && !collidesWithCurrent)) {
           const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           txt.setAttribute('x', `${x}`);
           txt.setAttribute('y', `${HEADER_HEIGHT - 12}`);
@@ -296,15 +298,32 @@ const timelineConfig = {
       for (const lane of visibleLanes) {
         const laneLayout = laneYMap.get(lane.id)!;
 
-        // Lane label in left gutter
+        // Lane label in left gutter (wrapped if containing '&')
         const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         lbl.setAttribute('x', '10');
-        lbl.setAttribute('y', `${laneLayout.y + 15}`);
         lbl.setAttribute('font-family', 'var(--font-mono)');
         lbl.setAttribute('font-size', '11');
         lbl.setAttribute('font-weight', '500');
         lbl.setAttribute('fill', `var(--lane-${lane.id})`);
-        lbl.textContent = lane[locale];
+
+        const laneName = lane[locale] || lane.en;
+        if (laneName.includes('&')) {
+          const parts = laneName.split('&');
+          lbl.setAttribute('y', `${laneLayout.y + 11}`);
+          const t1 = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+          t1.setAttribute('x', '10');
+          t1.setAttribute('dy', '0');
+          t1.textContent = parts[0].trim() + ' &';
+          const t2 = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+          t2.setAttribute('x', '10');
+          t2.setAttribute('dy', '13');
+          t2.textContent = parts[1].trim();
+          lbl.appendChild(t1);
+          lbl.appendChild(t2);
+        } else {
+          lbl.setAttribute('y', `${laneLayout.y + 15}`);
+          lbl.textContent = laneName;
+        }
         gLanes.appendChild(lbl);
 
         // Lane track background
@@ -328,8 +347,9 @@ const timelineConfig = {
         const color = `var(--lane-${entry.lane})`;
 
         if (entry.isRange) {
+          const itemEnd = (entry.rawEnd === 'present' || entry.isOngoing) ? currentYearDecimal : entry.end;
           const x1 = GUTTER_WIDTH + yearToX(entry.start, chartWidth);
-          const x2 = GUTTER_WIDTH + yearToX(entry.end, chartWidth);
+          const x2 = GUTTER_WIDTH + yearToX(itemEnd, chartWidth);
           const barWidth = Math.max(6, x2 - x1);
 
           // Solid range bar
@@ -356,7 +376,7 @@ const timelineConfig = {
           gItems.appendChild(bar);
 
           // If expected segment exists (e.g. PhD expected segment to May 2027) -> draw dotted!
-          if (entry.endExpected && entry.endExpected > entry.end) {
+          if (entry.endExpected && entry.endExpected > itemEnd) {
             const xExp = GUTTER_WIDTH + yearToX(entry.endExpected, chartWidth);
             const dottedLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             dottedLine.setAttribute('x1', `${x2}`);
@@ -469,25 +489,40 @@ const timelineConfig = {
         card.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
         card.style.borderLeftColor = `var(--lane-${entry.lane})`;
 
-        const header = document.createElement('div');
-        header.className = 'card-header';
+        // Top meta row with lane marker and dates in mono
+        const cardTop = document.createElement('div');
+        cardTop.className = 'card-top';
 
         const lanePip = document.createElement('span');
         lanePip.className = 'card-lane-pip';
         lanePip.style.backgroundColor = `var(--lane-${entry.lane})`;
 
+        const dateEl = document.createElement('span');
+        dateEl.className = 'card-date';
+        let dateStr = '';
+        if (entry.isRange) {
+          dateStr = entry.rawStart ? `${entry.rawStart} – ${entry.rawEnd || (entry.endExpected ? `${entry.rawEndExpected} (exp)` : (locale === 'pt' ? 'atual' : 'present'))}` : '';
+        } else {
+          dateStr = entry.rawDate || '';
+        }
+        dateEl.textContent = dateStr;
+
+        cardTop.appendChild(lanePip);
+        cardTop.appendChild(dateEl);
+        card.appendChild(cardTop);
+
+        // Title: consistent font style and size for both publications and career entries
         const roleTitle = document.createElement('h4');
         roleTitle.className = 'card-title';
-        roleTitle.textContent = entry.isPublication ? (entry.title || '') : (entry.role || entry.org || '');
+        roleTitle.textContent = entry.isPublication ? (entry.title || '') : (entry.role || entry.title || '');
+        card.appendChild(roleTitle);
 
-        header.appendChild(lanePip);
-        header.appendChild(roleTitle);
-        card.appendChild(header);
-
-        if (entry.org && !entry.isPublication) {
+        // Org / Venue: consistent font style and size
+        const orgText = entry.isPublication ? (entry.venue || '') : (entry.org || '');
+        if (orgText) {
           const orgEl = document.createElement('div');
           orgEl.className = 'card-org';
-          orgEl.textContent = entry.org;
+          orgEl.textContent = orgText;
           card.appendChild(orgEl);
         }
 
@@ -878,10 +913,11 @@ const timelineConfig = {
     outline-offset: 2px;
   }
 
-  .card-header {
+  .card-top {
     display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.35rem;
   }
 
   .card-lane-pip {
@@ -892,12 +928,20 @@ const timelineConfig = {
     flex-shrink: 0;
   }
 
+  .card-date {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+
   .card-title {
     font-family: var(--font-body);
     font-size: 0.95rem;
     font-weight: 500;
     color: var(--ink);
     line-height: 1.35;
+    margin: 0;
   }
 
   .card-org {
@@ -905,6 +949,7 @@ const timelineConfig = {
     font-size: var(--text-mono-sm);
     color: var(--muted);
     margin-top: 0.25rem;
+    line-height: 1.4;
   }
 
   .card-detail {

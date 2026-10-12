@@ -40,14 +40,17 @@ if (portraitPath) {
 
         {hasPortrait && (
           <aside class="about-portrait-wrap">
-            <img
-              src={portraitPath}
-              alt={content.meta.name}
-              class="about-portrait"
-              loading="lazy"
-              width="240"
-              height="300"
-            />
+            <picture>
+              <source srcset="/portrait.webp" type="image/webp" />
+              <img
+                src={portraitPath}
+                alt="Joyce Horn Fonteles"
+                class="about-portrait"
+                loading="eager"
+                width="300"
+                height="375"
+              />
+            </picture>
           </aside>
         )}
       </div>
@@ -66,6 +69,11 @@ if (portraitPath) {
     gap: 3.5rem;
   }
 
+  .about-prose {
+    flex: 1;
+    min-width: 0;
+  }
+
   .about-prose p {
     font-size: var(--text-base);
     line-height: 1.65;
@@ -79,26 +87,29 @@ if (portraitPath) {
 
   .about-portrait-wrap {
     flex-shrink: 0;
-    max-width: 240px;
+    width: 300px;
+    max-width: 320px;
   }
 
   .about-portrait {
     display: block;
     width: 100%;
     height: auto;
+    aspect-ratio: 4 / 5;
     border-radius: 2px;
     border: 1px solid var(--rule);
-    filter: grayscale(15%);
   }
 
   @media (max-width: 899px) {
     .about-content {
-      flex-direction: column-reverse;
-      gap: 2rem;
+      flex-direction: column;
+      gap: 1.75rem;
     }
 
     .about-portrait-wrap {
-      max-width: 180px;
+      order: -1;
+      width: 60%;
+      max-width: 260px;
     }
   }
 </style>

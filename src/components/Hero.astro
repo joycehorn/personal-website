@@ -17,36 +17,47 @@ const email = content.meta.email;
 
 const links = content.meta.links;
 const activeLinks = Object.entries(links).filter(([_, url]) => !isTodo(url));
+
+function formatLinkLabel(key: string): string {
+  if (key === 'scholar') return 'Google Scholar';
+  if (key === 'github') return 'GitHub';
+  if (key === 'linkedin') return 'LinkedIn';
+  if (key === 'orcid') return 'ORCID';
+  return key.charAt(0).toUpperCase() + key.slice(1);
+}
 ---
 
 <section class="hero-section" aria-label="Introduction">
   <div class="container">
-    <div class="hero-inner">
-      <h1 class="hero-name">{name}</h1>
-      <p class="hero-headline">{headline}</p>
+    <div class="section-grid hero-grid">
+      <div class="hero-gutter-spacer" aria-hidden="true"></div>
+      <div class="section-content hero-content">
+        <h1 class="hero-name">{name}</h1>
+        <p class="hero-headline">{headline}</p>
 
-      <div class="hero-now">
-        <span class="now-indicator" aria-hidden="true">■</span>
-        <span class="now-text">{now}</span>
+        <div class="hero-now">
+          <span class="now-indicator" aria-hidden="true">■</span>
+          <span class="now-text">{now}</span>
+        </div>
+
+        <div class="hero-actions">
+          <a href={`mailto:${email}`} class="hero-email-link">
+            <span class="email-prefix">email:</span> {email}
+          </a>
+
+          {activeLinks.length > 0 && (
+            <div class="hero-links" aria-label="Profiles">
+              {activeLinks.map(([key, url]) => (
+                <a href={url} target="_blank" rel="noopener noreferrer" class="hero-sublink">
+                  {formatLinkLabel(key)} ↗
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <MiniTimeline locale={locale} />
       </div>
-
-      <div class="hero-actions">
-        <a href={`mailto:${email}`} class="hero-email-link">
-          <span class="email-prefix">email:</span> {email}
-        </a>
-
-        {activeLinks.length > 0 && (
-          <div class="hero-links" aria-label="Profiles">
-            {activeLinks.map(([key, url]) => (
-              <a href={url} target="_blank" rel="noopener noreferrer" class="hero-sublink">
-                {key.charAt(0).toUpperCase() + key.slice(1)} ↗
-              </a>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <MiniTimeline locale={locale} />
     </div>
   </div>
 </section>
@@ -57,8 +68,14 @@ const activeLinks = Object.entries(links).filter(([_, url]) => !isTodo(url));
     padding-bottom: clamp(3.5rem, 8vw, 6rem);
   }
 
-  .hero-inner {
-    max-width: 75ch;
+  .hero-grid {
+    border-top: none;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .hero-content {
+    width: 100%;
   }
 
   .hero-name {

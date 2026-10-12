@@ -14,14 +14,14 @@
 meta:
   name: "Joyce Horn Fonteles"
   domain: "joycehornfonteles.com"
-  email: "joyce@hornfonteles.com"    # public contact (personal domain, outlives the PhD)
+  email: "joyce@hornfonteles.com"
   email_academic: "joyce.h.fonteles@vanderbilt.edu"
   location:
     en: "Nashville, TN, USA"
     pt: "Nashville, TN, EUA"
   links:
-    scholar: "TODO"
-    github: "TODO"
+    scholar: "https://scholar.google.com/citations?user=6QmCCGEAAAAJ"
+    github: "https://github.com/joycehorn"
     linkedin: "https://www.linkedin.com/in/joyce-horn"
     orcid: "TODO"
   portrait: "/portrait.jpg"          # optional; if the file is absent, render no image and no placeholder
@@ -81,43 +81,45 @@ tags:
   MUSIC_COMPUTING:      { en: "Music computing",          pt: "Computação musical" }
   GRAPHICS:             { en: "Computer graphics",        pt: "Computação gráfica" }
   ACCESSIBILITY:        { en: "Accessibility",            pt: "Acessibilidade" }
+  VALIDITY:             { en: "Validity & trust",         pt: "Validade e confiança" }
+  AFFECT:               { en: "Affective computing",      pt: "Computação afetiva" }
 
 # ---------------------------------------------------------------------
 # Research themes — render IN THIS ORDER.
 # ---------------------------------------------------------------------
 research_themes:
-  - id: hitl
+  - id: partnership
     tag: HUMAN_IN_THE_LOOP
     title:
-      en: "AI proposes, experts verify"
-      pt: "A IA propõe, especialistas verificam"
+      en: "Human–AI partnership"
+      pt: "Parceria humano–IA"
     text:
-      en: "Pipelines where vision, audio, and language models surface candidate moments in classroom recordings, trained analysts confirm or correct them, and those corrections feed back into the models through active learning and chain-of-thought refinement."
-      pt: "Pipelines em que modelos de visão, áudio e linguagem identificam momentos candidatos em gravações de sala de aula, analistas treinados os confirmam ou corrigem, e essas correções retornam aos modelos por meio de aprendizado ativo e refinamento com chain-of-thought."
+      en: "A framework for interpreting learning behaviors from classroom recordings in which AI models propose interpretations, experts verify and correct them, and authority, labor, and inspectable evidence are allocated across every stage of the analysis pipeline."
+      pt: "Um framework para interpretar comportamentos de aprendizagem a partir de gravações de sala de aula, no qual modelos de IA propõem interpretações, especialistas as verificam e corrigem, e autoridade, trabalho e evidências inspecionáveis são distribuídos entre todas as etapas do pipeline de análise."
+  - id: validity
+    tag: VALIDITY
+    title:
+      en: "Evidence that travels with every result"
+      pt: "Evidências que acompanham cada resultado"
+    text:
+      en: "Validity, reliability, reproducibility, and uncertainty evidence carried through each pipeline stage, so that a questionable interpretation can be traced to the step that produced it, and experts' trust in the analysis can be measured rather than assumed."
+      pt: "Evidências de validade, confiabilidade, reprodutibilidade e incerteza carregadas por cada etapa do pipeline, para que uma interpretação questionável possa ser rastreada até a etapa que a produziu e a confiança dos especialistas na análise seja medida, e não presumida."
   - id: llm-eval
     tag: LLM_EVALUATION
     title:
       en: "Knowing when to trust an LLM's reading"
       pt: "Saber quando confiar na leitura de um LLM"
     text:
-      en: "Methods for evaluating LLMs as qualitative analysts of multimodal classroom data: where they agree with expert coders, where they diverge, and what that divergence tells us."
-      pt: "Métodos para avaliar LLMs como analistas qualitativos de dados multimodais de sala de aula: onde concordam com codificadores especialistas, onde divergem e o que essa divergência revela."
+      en: "Methods for evaluating LLMs and vision-language models as qualitative analysts of multimodal classroom data: where they agree with expert coders, where they diverge, and how evaluation design changes the answer."
+      pt: "Métodos para avaliar LLMs e modelos de visão e linguagem como analistas qualitativos de dados multimodais de sala de aula: onde concordam com codificadores especialistas, onde divergem e como o desenho da avaliação muda a resposta."
   - id: interfaces
     tag: XAI
     title:
       en: "Interfaces people can interrogate"
       pt: "Interfaces que podem ser questionadas"
     text:
-      en: "Visual tools, such as an AI-enhanced timeline of multimodal interactions, that place the evidence next to every AI judgment so researchers and teachers can validate it, override it, and learn from it."
-      pt: "Ferramentas visuais, como uma linha do tempo de interações multimodais aprimorada por IA, que colocam a evidência ao lado de cada julgamento da IA para que pesquisadores e professores possam validá-lo, contestá-lo e aprender com ele."
-  - id: multimodal
-    tag: MULTIMODAL_AI
-    title:
-      en: "Multimodal and embodied learning"
-      pt: "Aprendizagem multimodal e corporificada"
-    text:
-      en: "Late-fusion and agentic architectures that combine gaze, movement, speech, and gesture to recognize self- and socially-shared regulation of learning in embodied science and computing activities."
-      pt: "Arquiteturas de fusão tardia e agênticas que combinam olhar, movimento, fala e gestos para reconhecer a autorregulação e a regulação socialmente compartilhada da aprendizagem em atividades corporificadas de ciências e computação."
+      en: "Review tools that keep the evidence next to every AI judgment, so researchers and teachers can validate it, override it, and learn from it, built on privacy-preserving pipelines where identifiable K–12 data is processed locally."
+      pt: "Ferramentas de revisão que mantêm a evidência ao lado de cada julgamento da IA, para que pesquisadores e professores possam validá-lo, contestá-lo e aprender com ele, construídas sobre pipelines que preservam a privacidade, nos quais dados identificáveis da educação básica são processados localmente."
 
 # ---------------------------------------------------------------------
 # Projects
@@ -125,7 +127,9 @@ research_themes:
 projects:
   - id: ai-timeline
     featured: true
-    period: "2023 – present"
+    period:
+      en: "2023 – present"
+      pt: "2023 – atual"
     title:
       en: "AI-enhanced timeline for multimodal interaction analysis"
       pt: "Linha do tempo aprimorada por IA para análise de interações multimodais"
@@ -138,7 +142,9 @@ projects:
 
   - id: gem-step
     featured: true
-    period: "2022 – present"
+    period:
+      en: "2022 – present"
+      pt: "2022 – atual"
     title:
       en: "GEM-STEP: multimodal analysis of embodied science learning"
       pt: "GEM-STEP: análise multimodal da aprendizagem corporificada de ciências"
@@ -150,11 +156,13 @@ projects:
       en: "A modular framework that combines computer vision, audio processing, and LLM-based late fusion to classify self- and socially-shared regulation behaviors, refined over time with chain-of-thought prompting and active learning from human feedback."
       pt: "Um framework modular que combina visão computacional, processamento de áudio e fusão tardia baseada em LLMs para classificar comportamentos de autorregulação e de regulação socialmente compartilhada, refinado continuamente com prompting chain-of-thought e aprendizado ativo a partir de feedback humano."
     tags: [MULTIMODAL_AI, LLMS, COMPUTER_VISION, EMBODIED_LEARNING]
-    publications: [edm-mmla-2025, li-2026, under-review-knowledge-integration]
+    publications: [aied-2026, li-2026, edm-mmla-2025, bjet-review]
 
   - id: llm-eval
     featured: true
-    period: "2025 – 2026"
+    period:
+      en: "2025 – 2026"
+      pt: "2025 – 2026"
     title:
       en: "Evaluating LLMs as analysts of classroom interaction"
       pt: "Avaliação de LLMs como analistas de interações em sala de aula"
@@ -163,11 +171,13 @@ projects:
       en: "A method for measuring how well large language models perform multimodal analysis of embodied classroom learning, compared against expert human interpretation."
       pt: "Um método para medir o desempenho de modelos de linguagem de grande escala na análise multimodal da aprendizagem corporificada em sala de aula, em comparação com a interpretação de especialistas humanos."
     tags: [LLM_EVALUATION, LLMS, LEARNING_ANALYTICS]
-    publications: [lak-2026]
+    publications: [lak-2026, lak-2027]
 
   - id: haifa
     featured: true
-    period: "2024 – present"
+    period:
+      en: "2024 – present"
+      pt: "2024 – atual"
     title:
       en: "LLMs and embodied computational thinking"
       pt: "LLMs e pensamento computacional corporificado"
@@ -179,11 +189,13 @@ projects:
       en: "AI tools that turn students' embodied exploration into executable code through natural-language-to-code workflows, with prompt engineering and multilingual guardrails for culturally aware, pedagogically aligned interactions. Curriculum co-design and pilots in the U.S. and Israel."
       pt: "Ferramentas de IA que transformam a exploração corporificada dos estudantes em código executável por meio de fluxos de linguagem natural para código, com engenharia de prompts e salvaguardas multilíngues para interações culturalmente sensíveis e pedagogicamente alinhadas. Co-design de currículo e pilotos nos EUA e em Israel."
     tags: [LLMS, AGENTS, EMBODIED_LEARNING]
-    publications: []
+    publications: [lid-recode]
 
   - id: music
     featured: false
-    period: "2008 – 2021"
+    period:
+      en: "2008 – 2021"
+      pt: "2008 – 2021"
     title:
       en: "Conducting particles: gesture-driven music visualization"
       pt: "Regendo partículas: visualização musical controlada por gestos"
@@ -432,6 +444,26 @@ timeline:
     tags: [SOFTWARE_ENGINEERING]
 
   # ---------------- HONORS & GRANTS ----------------
+  - id: aivo-fellow-2026
+    lane: honors
+    date: "2026"
+    org: "AI Institutes Virtual Organization (AIVO) · funded by Google.org"
+    role:
+      en: "AI4Ed Summer Fellow (second selection)"
+      pt: "AI4Ed Summer Fellow (segunda seleção)"
+    summary:
+      en: "Fellowship connecting researchers across the NSF National AI Research Institutes on AI in education."
+      pt: "Fellowship que conecta pesquisadores dos NSF National AI Research Institutes em IA na educação."
+  - id: horizon-grant
+    lane: honors
+    date: "2026"
+    org: "LIVE, Vanderbilt's AI and learning sciences incubator"
+    role:
+      en: "Student Horizon Travel Grant"
+      pt: "Student Horizon Travel Grant"
+    summary:
+      en: "Competitive award for presenting research at an international conference."
+      pt: "Auxílio competitivo para apresentação de pesquisa em conferência internacional."
   - id: aivo-fellow
     lane: honors
     date: "2025"
@@ -440,8 +472,8 @@ timeline:
       en: "AI4Ed Summer Fellow"
       pt: "AI4Ed Summer Fellow"
     summary:
-      en: "Competitive cross-institute fellowship; collaborated with NSF AI Institute researchers on multimodal AI and presented at the AI4Ed summit."
-      pt: "Fellowship competitiva entre institutos; colaboração com pesquisadores dos NSF AI Institutes em IA multimodal e apresentação no AI4Ed Summit."
+      en: "Fellowship connecting researchers across the NSF National AI Research Institutes on AI in education; presented at the AI4Ed summit."
+      pt: "Fellowship que conecta pesquisadores dos NSF National AI Research Institutes em IA na educação; apresentação no AI4Ed Summit."
   - id: haifa-grant
     lane: honors
     date: "2024"
@@ -478,6 +510,9 @@ timeline:
     role:
       en: "Scientific Initiation Scholarship"
       pt: "Bolsa de Iniciação Científica"
+    summary:
+      en: "Undergraduate research scholarship from Brazil's National Council for Scientific and Technological Development."
+      pt: "Bolsa de pesquisa na graduação do Conselho Nacional de Desenvolvimento Científico e Tecnológico."
   - id: csm
     lane: honors
     date: "2017-03"
@@ -515,7 +550,7 @@ timeline:
     lane: service
     start: "2024-01"
     end: "present"
-    org: "CVPR '26 · ICLS '24, '25 · CSCL '25 · AIED '25 · LAK '25 · EAAI '25 · Computers & Education"
+    org: "Computers & Education · CVPR 2026 · LAK 2025, 2027 · AIED 2025 · EDM 2025 · ICCE 2025 · ISLS 2024, 2025 · EAAI 2025, 2027"
     role:
       en: "Reviewer"
       pt: "Revisora"
@@ -562,16 +597,97 @@ timeline:
 
 # ---------------------------------------------------------------------
 # Publications. NEVER translate title / authors / venue.
-# type: journal | conference | workshop | under_review
+# type: journal | conference | workshop | under_review | preprint
+# status (optional, bilingual): shown instead of a year label for papers not yet published.
 # Bold the substring "Fonteles, J.H." when rendering authors.
 # ---------------------------------------------------------------------
 publications:
-  - id: under-review-knowledge-integration
+  - id: lak-2027
+    year: 2026
+    type: under_review
+    title: "Making Interpretations Accountable: Propagating Validation Evidence Through a Human–AI Multimodal Learning Analytics Pipeline"
+    authors: "Fonteles, J.H., Cohn, C., Zhou, M., Ayalon, E., Ashwin, T.S., & Biswas, G."
+    venue: "LAK 2027"
+    status: { en: "Submitted", pt: "Submetido" }
+    first_author: true
+    tags: [VALIDITY, HUMAN_IN_THE_LOOP, MULTIMODAL_AI]
+
+  - id: lid-recode
+    year: 2026
+    type: under_review
+    title: "Expanding Access to Collaborative Computational Thinking through the ReCode Loop and Role-Differentiated AI Agents"
+    authors: "Fonteles, J.H., Ayalon, E., Shaer, A., Enyedy, N., Dror, R., & Biswas, G."
+    venue: "Learning and Individual Differences"
+    status: { en: "Submitted", pt: "Submetido" }
+    first_author: true
+    tags: [AGENTS, LLMS, EMBODIED_LEARNING]
+
+  - id: aied-2026
+    year: 2026
+    type: conference
+    featured: true
+    title: "A Human–AI Partnership Framework for Multimodal Analysis in Embodied Learning Environments"
+    authors: "Fonteles, J.H., & Biswas, G."
+    venue: "AIED 2026 – International Conference on Artificial Intelligence in Education"
+    first_author: true
+    tags: [HUMAN_IN_THE_LOOP, MULTIMODAL_AI]
+
+  - id: cvpr-w-2026
+    year: 2026
+    type: workshop
+    title: "Do Emotion Recognition Models Generalize to Classrooms? Robustness and Fairness Analysis"
+    authors: "Sadashiva, A.T., Prasanna, S.M., Fonteles, J.H., & Biswas, G."
+    venue: "CV4Edu Workshop @ CVPR 2026"
+    tags: [COMPUTER_VISION, AFFECT]
+
+  - id: aciiw-2026
+    year: 2026
+    type: workshop
+    title: "When Modalities Disagree: Multimodal Sentiment Conflict as an Affective Signal in Collaborative Learning"
+    authors: "Sadashiva, A.T., Prasanna, S.M., Fonteles, J.H., & Biswas, G."
+    venue: "ACII 2026 Workshops and Demos"
+    tags: [AFFECT, MULTIMODAL_AI, COLLABORATION]
+
+  - id: isls-2026
+    year: 2026
+    type: conference
+    title: "A Multimodal Study of Emotion Regulation in Student Dyads During Computational Model Building"
+    authors: "Sadashiva, A.T., Prasanna, S.M., Fonteles, J.H., & Biswas, G."
+    venue: "ISLS 2026"
+    tags: [AFFECT, COLLABORATION]
+
+  - id: earli-2026
+    year: 2026
+    type: conference
+    title: "Multimodal Engagement Analytics for Collaborative Learning: A Human-in-the-Loop Approach"
+    authors: "Ashwin, T.S., Gupta, V., Cohn, C., Prasanna, S.M., Zou, X., Fonteles, J.H., Hmelo-Silver, C., Lester, J., & Biswas, G."
+    venue: "EARLI SIG: AI in Learning, Teaching and Education 2026"
+    tags: [HUMAN_IN_THE_LOOP, COLLABORATION]
+
+  - id: usrse-2025
+    year: 2025
+    type: conference
+    title: "SyncFlow: A Scalable Platform for Multimodal Learning Analytics"
+    authors: "Timalsina, U., Davalos, E., Sanda, N., Zhang, Y., Fonteles, J.H., Ashwin, T.S., & Biswas, G."
+    venue: "US-RSE 2025"
+    tags: [DATA_INFRASTRUCTURE, MULTIMODAL_AI]
+
+  - id: rag-preprint
+    year: 2025
+    type: preprint
+    title: "Personalizing Student–Agent Interactions Using Log-Contextualized Retrieval-Augmented Generation (RAG)"
+    authors: "Cohn, C., Rayala, S., Snyder, C., Fonteles, J.H., Jain, S., Mohammed, N., et al."
+    venue: "arXiv:2505.17238"
+    url: "https://arxiv.org/abs/2505.17238"
+    tags: [AGENTS, LLMS]
+
+  - id: bjet-review
     year: 2026
     type: under_review
     title: "A Human–AI Multimodal Analysis of Collaborative Knowledge Integration through Embodiment and Reflection"
     authors: "Fonteles, J.H., Zhou, M., Cohn, C., Ayalon, E., Enyedy, N., & Biswas, G."
-    venue: "Under review"
+    venue: "British Journal of Educational Technology"
+    status: { en: "Major revision", pt: "Revisão maior" }
     first_author: true
     tags: [HUMAN_IN_THE_LOOP, MULTIMODAL_AI, COLLABORATION]
 
@@ -591,7 +707,7 @@ publications:
     type: conference
     featured: true
     title: "A Novel Approach to Evaluating the Effectiveness of Large Language Models for Multimodal Analysis of Embodied Learning in Classrooms"
-    authors: "Fonteles, J.H., Sivakumaran, N., et al."     # TODO: full author list
+    authors: "Fonteles, J.H., Sivakumaran, N., Cohn, C., Coursey, A., Yu, S., Stengel-Eskin, E., Ashwin, T.S., Bansal, M., & Biswas, G."
     venue: "LAK 2026 – International Learning Analytics and Knowledge Conference"
     doi: "10.1145/3785022.3785109"
     first_author: true
@@ -685,8 +801,8 @@ publications:
     doi: "10.22318/icls2024.926221"
     tags: [HUMAN_IN_THE_LOOP]
 
-  - id: bjet-2024
-    year: 2024
+  - id: bjet-2025
+    year: 2025
     type: journal
     featured: true
     title: "A Multimodal Approach to Support Teacher, Researcher and AI Collaboration in STEM+C Learning Environments"
@@ -708,8 +824,10 @@ publications:
     year: 2024
     type: under_review
     title: "Multimodal Methods for Analyzing Learning and Training Environments: A Systematic Literature Review"
-    authors: "Cohn, C., Davalos, E., Vatral, C., Fonteles, J.H., Wang, H.D., Ma, M., & Biswas, G."
-    venue: "Under review"
+    authors: "Cohn, C., Davalos, E., Vatral, C., Fonteles, J.H., Wang, H.D., Coursey, A., Rayala, S., Ma, M., & Biswas, G."
+    venue: "ACM Computing Surveys"
+    status: { en: "Under review", pt: "Em avaliação" }
+    url: "https://arxiv.org/abs/2408.14491"
     tags: [MULTIMODAL_AI]
 
   - id: lak-2024
@@ -837,7 +955,8 @@ ui:
   timeline_view:      { en: "Show timeline",      pt: "Ver linha do tempo" }
   all_lanes:          { en: "All",                pt: "Todos" }
   first_author_only:  { en: "First-author only",  pt: "Apenas como primeira autora" }
-  under_review:       { en: "Under review",       pt: "Em avaliação" }
+  under_review:       { en: "In review",          pt: "Em avaliação" }
+  preprint:           { en: "Preprint",           pt: "Preprint" }
   journal:            { en: "Journal",            pt: "Periódico" }
   conference:         { en: "Conference",         pt: "Conferência" }
   workshop:           { en: "Workshop",           pt: "Workshop" }

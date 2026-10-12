@@ -68,18 +68,22 @@ const entriesByLane = lanes.map((lane) => {
         aria-labelledby={`lane-heading-${lane.id}`}
       >
         <div class="lane-header">
-          <span class="lane-pip" style={`background-color: var(--lane-${lane.id});`} aria-hidden="true" />
           <h3 id={`lane-heading-${lane.id}`} class="lane-heading">{lane[locale]}</h3>
         </div>
 
         <div class="lane-entries">
-          {entries.map((entry) => {
+          {entries.map((entry, idx) => {
             const dateStr = entry.isRange
               ? formatDateRange(entry.rawStart, entry.rawEnd, locale, entry.rawEndExpected)
               : formatDate(entry.rawDate, locale);
+            const isOverflow = idx >= 3;
 
             return (
-              <article class="timeline-entry-row" data-lane={entry.lane}>
+              <article
+                class="timeline-entry-row"
+                data-lane={entry.lane}
+                data-overflow={isOverflow ? 'true' : 'false'}
+              >
                 <div class="entry-meta">
                   <span class="entry-date">{dateStr}</span>
                   {entry.org && <span class="entry-org">{entry.org}</span>}
@@ -118,6 +122,23 @@ const entriesByLane = lanes.map((lane) => {
             );
           })}
         </div>
+
+        {entries.length > 3 && (
+          <div class="lane-collapse-footer">
+            <button
+              type="button"
+              class="lane-expand-btn"
+              data-label-more={locale === 'pt' ? `Ver todos (${entries.length})` : `Show all (${entries.length})`}
+              data-label-less={locale === 'pt' ? 'Mostrar menos' : 'Show fewer'}
+              aria-expanded="false"
+            >
+              <span class="btn-text">
+                {locale === 'pt' ? `Ver todos (${entries.length})` : `Show all (${entries.length})`}
+              </span>
+              <span class="expand-arrow" aria-hidden="true">↓</span>
+            </button>
+          </div>
+        )}
       </section>
     ))}
   </div>
@@ -336,6 +357,53 @@ const entriesByLane = lanes.map((lane) => {
     }
   }
 
+  /* Mobile collapsed view (< 900px) */
+  @media (max-width: 899px) {
+    .timeline-list-wrapper.js-collapse-ready .timeline-lane-group:not(.is-expanded) .timeline-entry-row[data-overflow="true"] {
+      display: none;
+    }
+
+    .lane-collapse-footer {
+      display: block;
+      padding: 0.75rem 0 0 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .timeline-list-wrapper:not(.js-collapse-ready) .lane-collapse-footer {
+      display: none;
+    }
+
+    .lane-expand-btn {
+      font-family: var(--font-mono);
+      font-size: var(--text-mono-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all var(--transition-fast);
+    }
+
+    .lane-expand-btn:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+      background: var(--rule-subtle);
+    }
+  }
+
+  /* Desktop >= 900px: always show all items */
+  @media (min-width: 900px) {
+    .lane-collapse-footer {
+      display: none;
+    }
+  }
+
   /* Print view rules */
   @media print {
     .lane-filters-bar {
@@ -346,7 +414,41 @@ const entriesByLane = lanes.map((lane) => {
       padding-bottom: 1.5rem;
     }
     .timeline-entry-row {
+      display: grid !important;
       break-inside: avoid;
+    }
+    .lane-collapse-footer {
+      display: none !important;
     }
   }
 </style>
+
+<script>
+  // Mobile timeline collapse handler
+  const container = document.getElementById('timeline-list-container');
+  if (container) {
+    container.classList.add('js-collapse-ready');
+
+    container.querySelectorAll<HTMLButtonElement>('.lane-expand-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const group = btn.closest('.timeline-lane-group');
+        if (!group) return;
+
+        const isExpanded = group.classList.toggle('is-expanded');
+        btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+
+        const labelMore = btn.getAttribute('data-label-more') || '';
+        const labelLess = btn.getAttribute('data-label-less') || '';
+        const textSpan = btn.querySelector('.btn-text');
+        const arrowSpan = btn.querySelector('.expand-arrow');
+
+        if (textSpan) {
+          textSpan.textContent = isExpanded ? labelLess : labelMore;
+        }
+        if (arrowSpan) {
+          arrowSpan.textContent = isExpanded ? '↑' : '↓';
+        }
+      });
+    });
+  }
+</script>

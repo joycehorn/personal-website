@@ -34,9 +34,9 @@ function buildApaCitation(pub: Publication): string {
   return `${authors} (${year}). ${title}. ${venue}.${link ? ` ${link}` : ''}`;
 }
 
-// Separate under review from published
-const underReviewPubs = publications.filter((p) => p.type === 'under_review');
-const publishedPubs = publications.filter((p) => p.type !== 'under_review');
+// Separate in-review (under_review + preprint) from published
+const inReviewPubs = publications.filter((p) => p.type === 'under_review' || p.type === 'preprint');
+const publishedPubs = publications.filter((p) => p.type !== 'under_review' && p.type !== 'preprint');
 
 // Group published by year descending
 const years = Array.from(new Set(publishedPubs.map((p) => p.year))).sort((a, b) => b - a);
@@ -56,6 +56,9 @@ const pubsByYear = years.map((year) => ({
         </button>
         <button type="button" class="pub-filter-btn" data-type="under_review" aria-pressed="false">
           {underReviewLabel}
+        </button>
+        <button type="button" class="pub-filter-btn" data-type="preprint" aria-pressed="false">
+          {getUi('preprint', locale)}
         </button>
         <button type="button" class="pub-filter-btn" data-type="journal" aria-pressed="false">
           {getUi('journal', locale)}
@@ -108,22 +111,23 @@ const pubsByYear = years.map((year) => ({
 
   <!-- Publications stream -->
   <div class="pub-list-stream" id="pub-stream">
-    <!-- Under Review Section (at top, separated) -->
-    {underReviewPubs.length > 0 && (
+    <!-- Under Review / In Review Section (at top, separated) -->
+    {inReviewPubs.length > 0 && (
       <section class="pub-group pub-group-under-review" data-group="under_review">
         <div class="group-header">
-          <span class="group-pip under-review-pip" aria-hidden="true"></span>
           <h2 class="group-heading under-review-heading">{underReviewLabel}</h2>
         </div>
 
         <div class="group-items">
-          {underReviewPubs.map((pub) => {
+          {inReviewPubs.map((pub) => {
             const apaStr = buildApaCitation(pub);
             const authorHtml = pub.authors.replace(
               /Fonteles,\s*J\.H\./g,
               '<strong>Fonteles, J.H.</strong>'
             );
-            const showVenue = pub.venue && pub.venue.trim().toLowerCase() !== 'under review';
+            const statusLabel = pub.status
+              ? t(pub.status, locale)
+              : (pub.type === 'preprint' ? getUi('preprint', locale) : underReviewLabel);
 
             return (
               <article
@@ -136,8 +140,9 @@ const pubsByYear = years.map((year) => ({
               >
                 <div class="pub-header">
                   <div class="pub-meta">
-                    <span class="pub-badge under-review-badge">{underReviewLabel}</span>
-                    {showVenue && <span class="pub-venue">{pub.venue}</span>}
+                    {pub.venue && <span class="pub-venue">{pub.venue}</span>}
+                    {pub.venue && <span class="meta-sep">·</span>}
+                    <span class="pub-badge under-review-badge">{statusLabel}</span>
                   </div>
                   {pub.featured && (
                     <span class="featured-indicator" title="Featured publication" aria-label="Featured">★</span>
@@ -207,7 +212,6 @@ const pubsByYear = years.map((year) => ({
     {pubsByYear.map(({ year, items }) => (
       <section class="pub-group" data-year={year}>
         <div class="group-header">
-          <span class="group-pip" aria-hidden="true"></span>
           <h2 class="group-heading">{year}</h2>
         </div>
 
@@ -231,7 +235,7 @@ const pubsByYear = years.map((year) => ({
               >
                 <div class="pub-header">
                   <div class="pub-meta">
-                    <span class="pub-type-tag">{pub.type}</span>
+                    <span class="pub-type-tag">{getUi(pub.type, locale) || pub.type}</span>
                     <span class="meta-sep">/</span>
                     <span class="pub-venue">{pub.venue}</span>
                   </div>

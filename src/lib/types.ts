@@ -33,7 +33,7 @@ export interface ResearchTheme {
 export interface Project {
   id: string;
   featured: boolean;
-  period: string;
+  period: StringOrLocalized;
   title: LocalizedString;
   context: string;
   role?: LocalizedString;
@@ -66,7 +66,7 @@ export interface TimelineItem {
   hidden?: boolean;
 }
 
-export type PublicationType = 'journal' | 'conference' | 'workshop' | 'under_review';
+export type PublicationType = 'journal' | 'conference' | 'workshop' | 'under_review' | 'preprint';
 
 export interface Publication {
   id: string;
@@ -75,6 +75,7 @@ export interface Publication {
   title: string;
   authors: string;
   venue: string;
+  status?: StringOrLocalized;
   doi?: string;
   url?: string;
   first_author?: boolean;

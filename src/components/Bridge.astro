@@ -11,14 +11,16 @@ const content = loadContent();
 const bridge = content.bridge;
 const title = t(bridge.title, locale);
 const text = t(bridge.text, locale);
+const industryLane = content.lanes.find((l) => l.id === 'industry');
+const researchLane = content.lanes.find((l) => l.id === 'research');
+const bridgeLabelText = `${industryLane ? industryLane[locale] : 'Industry'} / ${researchLane ? researchLane[locale] : 'Research'}`;
 ---
 
 <section class="bridge-section" aria-label={title}>
   <div class="container">
     <div class="section-grid">
       <div class="section-label bridge-label">
-        <span class="bridge-pip" aria-hidden="true" />
-        <span>Industry / Pesquisa</span>
+        <span>{bridgeLabelText}</span>
       </div>
 
       <div class="section-content">

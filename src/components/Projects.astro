@@ -20,6 +20,51 @@ for (const pub of content.publications) {
 
 const pubsHref = locale === 'pt' ? '/pt/publicacoes' : '/publications';
 const relatedPubsLabel = getUi('related_pubs', locale);
+function getRelatedPubLabel(pub: Publication, locale: Locale): string {
+  let shortVenue = pub.venue || '';
+  if (shortVenue.includes('British Journal of Educational Technology')) {
+    shortVenue = 'BJET';
+  } else if (shortVenue.includes('Learning and Individual Differences')) {
+    shortVenue = 'LID';
+  } else if (shortVenue.includes('Learning and Instruction')) {
+    shortVenue = 'Learning & Instruction';
+  } else if (shortVenue.includes('ACM Computing Surveys')) {
+    shortVenue = 'ACM Computing Surveys';
+  } else if (shortVenue.includes('Journal of Visual Languages & Computing')) {
+    shortVenue = 'JVLC';
+  } else if (shortVenue.includes('Journal on Interactive Systems')) {
+    shortVenue = 'JIS';
+  } else if (shortVenue.includes('Entertainment Computing')) {
+    shortVenue = 'Entertainment Computing';
+  } else {
+    if (shortVenue.includes(' @ ')) {
+      shortVenue = shortVenue.replace(/\s+Workshop\s+@\s+/i, ' @ ').trim();
+    } else {
+      shortVenue = shortVenue.split(/\s+[–—]\s+/)[0].trim();
+    }
+  }
+
+  if (pub.status) {
+    const statusText = t(pub.status, locale);
+    return `${shortVenue} · ${statusText}`;
+  }
+
+  if (pub.type === 'under_review') {
+    const statusText = getUi('under_review', locale);
+    return `${shortVenue} · ${statusText}`;
+  }
+  if (pub.type === 'preprint') {
+    const statusText = getUi('preprint', locale);
+    return `${shortVenue} · ${statusText}`;
+  }
+
+  const yearStr = `${pub.year}`;
+  if (shortVenue.includes(yearStr)) {
+    return shortVenue;
+  }
+  return `${shortVenue} (${pub.year})`;
+}
+
 const sectionLabel = locale === 'pt' ? 'Projetos selecionados' : 'Selected projects';
 ---
 
@@ -42,7 +87,7 @@ const sectionLabel = locale === 'pt' ? 'Projetos selecionados' : 'Selected proje
               <article class="project-entry" data-index={idx}>
                 <header class="project-header">
                   <div class="project-meta">
-                    <span class="project-period">{project.period}</span>
+                    <span class="project-period">{t(project.period, locale)}</span>
                     <span class="meta-sep">/</span>
                     <span class="project-context">{project.context}</span>
                     {role && (
@@ -68,16 +113,13 @@ const sectionLabel = locale === 'pt' ? 'Projetos selecionados' : 'Selected proje
                     <div class="project-related">
                       <span class="related-label">{relatedPubsLabel}:</span>
                       <ul class="related-list">
-                        {related.map((pub) => {
-                          const pubShort = pub.venue.split('–')[0].split('@')[0].trim();
-                          return (
-                            <li>
-                              <a href={`${pubsHref}#${pub.id}`} class="related-link" title={pub.title}>
-                                {pubShort} ({pub.year})
-                              </a>
-                            </li>
-                          );
-                        })}
+                        {related.map((pub) => (
+                          <li>
+                            <a href={`${pubsHref}#${pub.id}`} class="related-link" title={pub.title}>
+                              {getRelatedPubLabel(pub, locale)}
+                            </a>
+                          </li>
+                        ))}
                       </ul>
                     </div>
                   )}
@@ -93,52 +135,40 @@ const sectionLabel = locale === 'pt' ? 'Projetos selecionados' : 'Selected proje
               const related = (project.publications || [])
                 .map((id) => pubsMap.get(id))
                 .filter((p): p is Publication => Boolean(p));
-              const isMusic = project.id === 'music';
 
               return (
-                <article class={`project-entry project-quiet ${isMusic ? 'project-music' : ''}`}>
-                  <div class={isMusic ? 'music-row-wrap' : ''}>
-                    <div class="project-info">
-                      <div class="project-meta">
-                        <span class="project-period">{project.period}</span>
-                        <span class="meta-sep">/</span>
-                        <span class="project-context">{project.context}</span>
-                      </div>
-                      <h3 class="project-title project-quiet-title">{t(project.title, locale)}</h3>
-                      <p class="project-summary project-quiet-summary">{t(project.summary, locale)}</p>
-                      
-                      <div class="project-footer">
-                        <div class="project-chips">
-                          {project.tags.map((tag) => (
-                            <Chip tag={tag} locale={locale} />
-                          ))}
-                        </div>
-
-                        {related.length > 0 && (
-                          <div class="project-related">
-                            <span class="related-label">{relatedPubsLabel}:</span>
-                            <ul class="related-list">
-                              {related.map((pub) => {
-                                const pubShort = pub.venue.split('–')[0].split('@')[0].trim();
-                                return (
-                                  <li>
-                                    <a href={`${pubsHref}#${pub.id}`} class="related-link" title={pub.title}>
-                                      {pubShort} ({pub.year})
-                                    </a>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
+                <article class="project-entry project-quiet">
+                  <div class="project-info">
+                    <div class="project-meta">
+                      <span class="project-period">{t(project.period, locale)}</span>
+                      <span class="meta-sep">/</span>
+                      <span class="project-context">{project.context}</span>
                     </div>
-
-                    {isMusic && (
-                      <div class="conductor-canvas-wrap" aria-hidden="true">
-                        <canvas id="conductor-canvas" class="conductor-canvas" width="220" height="96"></canvas>
+                    <h3 class="project-title project-quiet-title">{t(project.title, locale)}</h3>
+                    <p class="project-summary project-quiet-summary">{t(project.summary, locale)}</p>
+                    
+                    <div class="project-footer">
+                      <div class="project-chips">
+                        {project.tags.map((tag) => (
+                          <Chip tag={tag} locale={locale} />
+                        ))}
                       </div>
-                    )}
+
+                      {related.length > 0 && (
+                        <div class="project-related">
+                          <span class="related-label">{relatedPubsLabel}:</span>
+                          <ul class="related-list">
+                            {related.map((pub) => (
+                              <li>
+                                <a href={`${pubsHref}#${pub.id}`} class="related-link" title={pub.title}>
+                                  {getRelatedPubLabel(pub, locale)}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </article>
               );
@@ -274,183 +304,4 @@ const sectionLabel = locale === 'pt' ? 'Projetos selecionados' : 'Selected proje
     font-size: 0.98rem;
   }
 
-  /* Conductor particle canvas */
-  .music-row-wrap {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
-  }
-
-  .conductor-canvas-wrap {
-    flex-shrink: 0;
-    width: 220px;
-    height: 96px;
-    border: 1px solid var(--rule);
-    border-radius: 2px;
-    background: transparent;
-    overflow: hidden;
-  }
-
-  .conductor-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  @media (max-width: 640px) {
-    .music-row-wrap {
-      flex-direction: column;
-    }
-
-    .conductor-canvas-wrap {
-      width: 100%;
-      max-width: 280px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .conductor-canvas-wrap {
-      display: none;
-    }
-  }
 </style>
-
-<script>
-  function initConductor() {
-    const canvas = document.getElementById('conductor-canvas') as HTMLCanvasElement | null;
-    if (!canvas) return;
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      canvas.style.display = 'none';
-      return;
-    }
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const width = canvas.width;
-    const height = canvas.height;
-
-    const NUM_PARTICLES = 16;
-    interface Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      baseX: number;
-      baseY: number;
-      phase: number;
-      size: number;
-      alpha: number;
-    }
-
-    const particles: Particle[] = [];
-    for (let i = 0; i < NUM_PARTICLES; i++) {
-      const bx = 24 + Math.random() * (width - 48);
-      const by = 16 + Math.random() * (height - 32);
-      particles.push({
-        x: bx,
-        y: by,
-        vx: 0,
-        vy: 0,
-        baseX: bx,
-        baseY: by,
-        phase: Math.random() * Math.PI * 2,
-        size: 1.2 + Math.random() * 1.3,
-        alpha: 0.35 + Math.random() * 0.45,
-      });
-    }
-
-    let targetX = width / 2;
-    let targetY = height / 2;
-    let isHovered = false;
-    let isRunning = false;
-    let rafId: number | null = null;
-
-    const container = canvas.closest('.project-entry') || canvas;
-
-    container.addEventListener('mousemove', (e: Event) => {
-      const mouse = e as MouseEvent;
-      const rect = canvas.getBoundingClientRect();
-      targetX = mouse.clientX - rect.left;
-      targetY = mouse.clientY - rect.top;
-      isHovered = true;
-    });
-
-    container.addEventListener('mouseleave', () => {
-      isHovered = false;
-    });
-
-    let lastTime = 0;
-    function render(time: number) {
-      if (!isRunning || !ctx) return;
-      const dt = Math.min(32, time - (lastTime || time)) / 1000;
-      lastTime = time;
-
-      ctx.clearRect(0, 0, width, height);
-
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const color = isDark ? '236, 232, 223' : '27, 26, 23';
-
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        p.phase += dt * 1.5;
-
-        const ambientX = Math.cos(p.phase) * 6;
-        const ambientY = Math.sin(p.phase * 0.8) * 6;
-
-        const destX = p.baseX + ambientX;
-        const destY = p.baseY + ambientY;
-
-        if (isHovered) {
-          const dx = targetX - p.x;
-          const dy = targetY - p.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist > 4) {
-            p.vx += (dx / dist) * 110 * dt;
-            p.vy += (dy / dist) * 110 * dt;
-          }
-        } else {
-          p.vx += (destX - p.x) * 4 * dt;
-          p.vy += (destY - p.y) * 4 * dt;
-        }
-
-        p.vx *= 0.90;
-        p.vy *= 0.90;
-        p.x += p.vx * dt * 30;
-        p.y += p.vy * dt * 30;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${color}, ${p.alpha})`;
-        ctx.fill();
-      }
-
-      rafId = requestAnimationFrame(render);
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          if (!isRunning) {
-            isRunning = true;
-            lastTime = 0;
-            rafId = requestAnimationFrame(render);
-          }
-        } else {
-          isRunning = false;
-          if (rafId) cancelAnimationFrame(rafId);
-        }
-      });
-    }, { threshold: 0.1 });
-
-    observer.observe(canvas);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initConductor);
-  } else {
-    initConductor();
-  }
-</script>

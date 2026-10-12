@@ -1,7 +1,7 @@
 import type { TimelineItem, Publication, Lane } from './types';
 
 export const TIMELINE_START_YEAR = 2002.0;
-export const TIMELINE_END_YEAR = 2027.5; // Coincides with graduation / May 2027
+export const TIMELINE_END_YEAR = 2028.0; // Extends through Dec 2027 so graduation / May 2027 is fully visible
 
 export function parseYearMonthToDecimal(dateStr: string): number {
   if (dateStr.toLowerCase() === 'present') {
@@ -22,6 +22,7 @@ export interface NormalizedTimelineEntry {
   lane: string;
   isPublication: boolean;
   isRange: boolean;
+  isOngoing?: boolean;
   start: number; // Decimal year
   end: number;   // Decimal year
   endExpected?: number; // Dotted segment end
@@ -60,8 +61,11 @@ export function buildTimelineDataset(
     let end = 0;
     let endExpected: number | undefined;
 
+    let isOngoing = false;
+
     if (isRange && item.start) {
       start = parseYearMonthToDecimal(item.start);
+      isOngoing = item.end === 'present' || (!item.end && Boolean(item.start));
       if (item.end) {
         end = parseYearMonthToDecimal(item.end);
       } else if (item.end_expected) {
@@ -91,6 +95,7 @@ export function buildTimelineDataset(
       lane: item.lane,
       isPublication: false,
       isRange,
+      isOngoing,
       start,
       end,
       endExpected,
@@ -214,8 +219,8 @@ export function xToYear(
  */
 export function snapToMonth(year: number): number {
   const baseYear = Math.floor(year);
-  const monthFraction = year - baseYear;
-  const monthIndex = Math.round(monthFraction * 12);
+  const monthFraction = Math.max(0, Math.min(0.9999, year - baseYear));
+  const monthIndex = Math.min(11, Math.floor(monthFraction * 12));
   return baseYear + (monthIndex + 0.5) / 12;
 }
 
@@ -245,8 +250,13 @@ export function getActiveEntriesAtYear(
 ): NormalizedTimelineEntry[] {
   return entries.filter((entry) => {
     if (entry.isRange) {
-      const maxEnd = entry.endExpected ? Math.max(entry.end, entry.endExpected) : entry.end;
-      return entry.start <= date && date <= maxEnd;
+      if (entry.rawEnd === 'present' || entry.isOngoing) {
+        if (entry.endExpected) {
+          return entry.start <= date + 0.01 && date <= entry.endExpected + 0.05;
+        }
+        return entry.start <= date + 0.01;
+      }
+      return entry.start <= date + 0.01 && date <= entry.end + 0.05;
     }
     // Point or publication: active if within the same calendar year (or +/- 0.5 year)
     return Math.abs(entry.start - date) <= 0.5;

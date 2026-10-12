@@ -3,6 +3,7 @@ dist/
 node_modules/
 .astro/
 screenshots/
+*.zip
 
 # Environment and logs
 .env

@@ -38,32 +38,12 @@
   --focus-ring: #1F5E5B;
 }
 
-/* Dark theme via media query */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #14130F;
-    --ink: #ECE8DF;
-    --muted: #9C978C;
-    --rule: #2E2C26;
-    --rule-subtle: rgba(236, 232, 223, 0.08);
-
-    --lane-research: #5FA8A2;
-    --lane-education: #8B98D6;
-    --lane-industry: #D98A5F;
-    --lane-publications: #ECE8DF;
-    --lane-honors: #D2B55E;
-    --lane-service: #A5B47A;
-
-    --focus-ring: #5FA8A2;
-  }
-}
-
-/* Explicit data-theme overrides */
+/* Dark theme via data-theme="dark" */
 :root[data-theme="dark"] {
-  --paper: #14130F;
+  --paper: #1E1B16;
   --ink: #ECE8DF;
-  --muted: #9C978C;
-  --rule: #2E2C26;
+  --muted: #A39D90;
+  --rule: #3A352C;
   --rule-subtle: rgba(236, 232, 223, 0.08);
 
   --lane-research: #5FA8A2;

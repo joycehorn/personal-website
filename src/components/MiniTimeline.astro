@@ -65,8 +65,9 @@ const nowX = yearToX(currentYearDecimal, SVG_WIDTH);
         const color = `var(--lane-${entry.lane})`;
 
         if (entry.isRange) {
+          const itemEnd = (entry.rawEnd === 'present' || entry.isOngoing) ? currentYearDecimal : entry.end;
           const x1 = yearToX(entry.start, SVG_WIDTH);
-          const x2 = yearToX(entry.end, SVG_WIDTH);
+          const x2 = yearToX(itemEnd, SVG_WIDTH);
           const width = Math.max(4, x2 - x1);
 
           return (
@@ -80,7 +81,7 @@ const nowX = yearToX(currentYearDecimal, SVG_WIDTH);
                 fill={color}
                 opacity="0.85"
               />
-              {entry.endExpected && entry.endExpected > entry.end && (
+              {entry.endExpected && entry.endExpected > itemEnd && (
                 <line
                   x1={x2}
                   y1={y + LANE_HEIGHT / 2}
@@ -134,7 +135,7 @@ const nowX = yearToX(currentYearDecimal, SVG_WIDTH);
     padding: 0.5rem 0.85rem;
     background: transparent;
     transition: border-color var(--transition-fast), background-color var(--transition-fast);
-    max-width: var(--col-reading);
+    width: 100%;
   }
 
   .mini-timeline-strip:hover {

@@ -34,6 +34,13 @@ if (locale === 'en') {
 }
 const switchLangText = getUi('switch_lang', locale);
 const contactLabel = getUi('contact', locale);
+function formatLinkLabel(key: string): string {
+  if (key === 'scholar') return 'Google Scholar';
+  if (key === 'github') return 'GitHub';
+  if (key === 'linkedin') return 'LinkedIn';
+  if (key === 'orcid') return 'ORCID';
+  return key.charAt(0).toUpperCase() + key.slice(1);
+}
 ---
 
 <footer class="site-footer">
@@ -49,7 +56,7 @@ const contactLabel = getUi('contact', locale);
           {activeLinks.map(([name, url]) => (
             <li>
               <a href={url} target="_blank" rel="noopener noreferrer" class="footer-link">
-                {name.charAt(0).toUpperCase() + name.slice(1)}
+                {formatLinkLabel(name)}
               </a>
             </li>
           ))}
