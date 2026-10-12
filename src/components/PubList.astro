@@ -1,6 +1,6 @@
 ---
 import type { Locale, Publication, PublicationType } from '../lib/types';
-import { loadContent, getUi, getTagLabel, t } from '../lib/content';
+import { loadContent, getUi, getTagLabel, t, isTodo } from '../lib/content';
 import Chip from './Chip.astro';
 
 interface Props {
@@ -186,6 +186,16 @@ const pubsByYear = years.map((year) => ({
                         Link ↗
                       </a>
                     )}
+                    {pub.pdf && !isTodo(pub.pdf) && (
+                      <a
+                        href={pub.pdf}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="pub-link pdf-link"
+                      >
+                        PDF ↗
+                      </a>
+                    )}
                   </div>
 
                   <div class="pub-chips">
@@ -286,6 +296,16 @@ const pubsByYear = years.map((year) => ({
                         class="pub-link url-link"
                       >
                         Link ↗
+                      </a>
+                    )}
+                    {pub.pdf && !isTodo(pub.pdf) && (
+                      <a
+                        href={pub.pdf}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="pub-link pdf-link"
+                      >
+                        PDF ↗
                       </a>
                     )}
                   </div>

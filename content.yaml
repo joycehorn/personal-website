@@ -688,6 +688,7 @@ publications:
     authors: "Cohn, C., Rayala, S., Snyder, C., Fonteles, J.H., Jain, S., Mohammed, N., et al."
     venue: "arXiv:2505.17238"
     url: "https://arxiv.org/abs/2505.17238"
+    pdf: "https://arxiv.org/pdf/2505.17238"
     tags: [AGENTS, LLMS]
 
   - id: bjet-review

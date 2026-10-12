@@ -80,6 +80,7 @@ export interface Publication {
   status?: StringOrLocalized;
   doi?: string;
   url?: string;
+  pdf?: string;
   first_author?: boolean;
   featured?: boolean;
   award?: LocalizedString;

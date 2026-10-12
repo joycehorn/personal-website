@@ -1,0 +1,2 @@
+# Place publication PDF files in this directory (e.g. li-2026.pdf)
+# In content.yaml, reference them as: pdf: "/papers/li-2026.pdf"
