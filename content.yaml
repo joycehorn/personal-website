@@ -578,7 +578,7 @@ timeline:
     start: "2025-02"
     end: "2025-11"
     role:
-      en: "Supervising a visiting master's student"
+      en: "Supervising a foreign master's student"
       pt: "Orientação de aluno de mestrado estrangeiro"
     summary:
       en: "LLM-based agents for computational thinking support."
