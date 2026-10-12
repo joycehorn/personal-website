@@ -27,6 +27,7 @@ const navResearch = getUi('nav_research', locale);
 const navTimeline = getUi('nav_timeline', locale);
 const navPublications = getUi('nav_publications', locale);
 const switchLangText = getUi('switch_lang', locale);
+const isPubs = currentPath.startsWith('/publications') || currentPath.startsWith('/pt/publicacoes');
 ---
 
 <header class="site-header">
@@ -40,7 +41,15 @@ const switchLangText = getUi('switch_lang', locale);
         <li><a href={`${homeHref}#about`}>{navAbout}</a></li>
         <li><a href={`${homeHref}#research`}>{navResearch}</a></li>
         <li><a href={`${homeHref}#timeline`}>{navTimeline}</a></li>
-        <li><a href={pubsHref}>{navPublications}</a></li>
+        <li>
+          <a
+            href={pubsHref}
+            class={isPubs ? 'active' : ''}
+            aria-current={isPubs ? 'page' : undefined}
+          >
+            {navPublications}
+          </a>
+        </li>
       </ul>
     </nav>
 
@@ -191,6 +200,11 @@ const switchLangText = getUi('switch_lang', locale);
     color: var(--ink);
   }
 
+  .nav-list a.active {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
   .header-actions {
     display: flex;
     align-items: center;
@@ -249,26 +263,25 @@ const switchLangText = getUi('switch_lang', locale);
   }
 
 
-  @media (max-width: 720px) {
-    .nav-menu {
-      display: none;
-    }
-  }
-
-  @media (max-width: 640px) {
+  @media (max-width: 899px) {
     .site-header {
-      padding: 0.85rem 0;
+      padding: 0.75rem 0 0.55rem 0;
     }
 
     .header-inner {
-      gap: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0;
     }
 
-    .wordmark {
-      font-size: 1.05rem;
+    .header-logo-link {
+      order: 1;
     }
 
     .header-actions {
+      order: 2;
       gap: 0.5rem;
     }
 
@@ -279,6 +292,41 @@ const switchLangText = getUi('switch_lang', locale);
 
     .theme-toggle {
       padding: 0.25rem 0.35rem;
+    }
+
+    .nav-menu {
+      order: 3;
+      width: 100%;
+      display: block;
+      margin-top: 0.55rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--rule-subtle);
+    }
+
+    .nav-list {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 1.15rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .nav-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-list a {
+      font-size: var(--text-mono-sm);
+      white-space: nowrap;
+      padding: 0.25rem 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .nav-list {
+      gap: 0.85rem;
     }
   }
 </style>

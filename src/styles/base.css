@@ -14,6 +14,7 @@ html {
   color: var(--ink);
   line-height: 1.6;
   scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
