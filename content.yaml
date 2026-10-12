@@ -31,8 +31,8 @@ headline:
   pt: "IA multimodal e colaboração humano–IA para compreender como as pessoas aprendem juntas."
 
 now:   # the "range" line under the headline: roles, not status
-  en: "AI researcher · software architect · database lead · product owner · educator"
-  pt: "Pesquisadora em IA · arquiteta de software · líder de banco de dados · product owner · educadora"
+  en: "AI researcher · software architect · educator"
+  pt: "Pesquisadora em IA · arquiteta de software · educadora"
 affiliation:
   en: "PhD candidate in Computer Science, Vanderbilt University · NSF EngageAI Institute"
   pt: "Doutoranda em Ciência da Computação, Vanderbilt University · NSF EngageAI Institute"
@@ -43,13 +43,13 @@ about:
 
     I'm a Computer Science PhD candidate at Vanderbilt University, advised by Prof. Gautam Biswas, and a researcher in the NSF EngageAI Institute. My work combines large language models, computer vision, and speech analysis with human-in-the-loop annotation to interpret how students learn together in real classrooms: what they say, where they look, how they move. I design the analysis pipelines, the evaluation methods that tell us when an LLM's reading of a classroom can be relied on, and the interfaces that put those results in front of researchers and teachers.
 
-    Before research, I spent fifteen years in industry: architecting healthcare and fintech platforms, leading the engineering and database teams behind 60+ judicial systems in the Brazilian Amazon, and training the public servants who took those courts from paper to digital. That shapes how I do research. I care about data that holds up in production, and about tools that real people actually adopt.
+    I have spent fifteen years in industry: architecting healthcare and fintech platforms, leading the engineering and database teams behind 60+ judicial systems in the Brazilian Amazon, and training the public servants who took those courts from paper to digital. That shapes how I do research. I care about data that holds up in production, and about tools that real people actually adopt.
   pt: |
     Desenvolvo sistemas de IA que ajudam a compreender a interação humana, sistemas que especialistas conseguem inspecionar e corrigir, e nos quais, com o tempo, aprendem a confiar.
 
     Sou doutoranda em Ciência da Computação na Vanderbilt University, orientada pelo Prof. Gautam Biswas, e pesquisadora do NSF EngageAI Institute. Meu trabalho combina modelos de linguagem de grande escala (LLMs), visão computacional e análise de fala com anotação humana no ciclo (human-in-the-loop) para interpretar como estudantes aprendem juntos em salas de aula reais: o que dizem, para onde olham, como se movem. Projeto os pipelines de análise, os métodos de avaliação que indicam quando a leitura de um LLM sobre uma sala de aula é confiável e as interfaces que levam esses resultados a pesquisadores e professores.
 
-    Antes da pesquisa, passei quinze anos na indústria: arquitetando plataformas de saúde e do setor financeiro, liderando as equipes de desenvolvimento e de banco de dados por trás de mais de 60 sistemas do Tribunal de Justiça do Pará e capacitando os servidores que levaram esse tribunal do papel ao digital. Essa trajetória molda a forma como pesquiso: me importo com dados que se sustentam em produção e com ferramentas que pessoas reais de fato adotam.
+    Tenho quinze anos de experiência na indústria: arquitetando plataformas de saúde e do setor financeiro, liderando as equipes de desenvolvimento e de banco de dados por trás de mais de 60 sistemas do Tribunal de Justiça do Pará e capacitando os servidores que levaram esse tribunal do papel ao digital. Essa trajetória molda a forma como pesquiso: me importo com dados que se sustentam em produção e com ferramentas que pessoas reais de fato adotam.
 
 bridge:   # NOT RENDERED (merged into the intro); kept for reference
   title:

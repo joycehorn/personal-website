@@ -15,12 +15,13 @@ const headline = t(content.headline, locale);
 const now = t(content.now, locale);
 const affiliation = content.affiliation ? t(content.affiliation, locale) : '';
 const email = content.meta.email;
+const showEmail = !isTodo(email);
 
 const aboutText = t(content.about, locale);
 const aboutParagraphs = aboutText.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 
-const links = content.meta.links;
-const activeLinks = Object.entries(links).filter(([_, url]) => !isTodo(url));
+const rawLinks = content.meta.links || {};
+const activeLinks = Object.entries(rawLinks).filter(([_, url]) => !isTodo(url));
 
 function formatLinkLabel(key: string): string {
   if (key === 'scholar') return 'Google Scholar';
@@ -54,17 +55,22 @@ function formatLinkLabel(key: string): string {
               ))}
             </div>
 
-            <div class="intro-contact">
-              <a href={`mailto:${email}`} class="contact-email">
-                <span class="email-label">email:</span> {email}
-              </a>
+            <!-- Mobile contact links: wrapping row under about text -->
+            {(showEmail || activeLinks.length > 0) && (
+              <div class="intro-contact-mobile" aria-label="Contact and profiles">
+                {showEmail && (
+                  <a href={`mailto:${email}`} class="contact-email">
+                    <span class="email-label">email:</span> {email}
+                  </a>
+                )}
 
-              {activeLinks.map(([key, url]) => (
-                <a href={url} target="_blank" rel="noopener noreferrer" class="contact-link">
-                  {formatLinkLabel(key)} ↗
-                </a>
-              ))}
-            </div>
+                {activeLinks.map(([key, url]) => (
+                  <a href={url} target="_blank" rel="noopener noreferrer" class="contact-link">
+                    {formatLinkLabel(key)} ↗
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           <div class="intro-photo-col">
@@ -74,12 +80,29 @@ function formatLinkLabel(key: string): string {
                 src="/portrait.jpg"
                 alt="Joyce Horn Fonteles"
                 class="intro-portrait"
-                width="300"
-                height="375"
+                width="280"
+                height="350"
                 loading="eager"
                 decoding="async"
               />
             </picture>
+
+            <!-- Desktop contact links: vertical list directly under portrait -->
+            {(showEmail || activeLinks.length > 0) && (
+              <div class="intro-contact-desktop" aria-label="Contact and profiles">
+                {showEmail && (
+                  <a href={`mailto:${email}`} class="contact-email">
+                    <span class="email-label">email:</span> {email}
+                  </a>
+                )}
+
+                {activeLinks.map(([key, url]) => (
+                  <a href={url} target="_blank" rel="noopener noreferrer" class="contact-link">
+                    {formatLinkLabel(key)} ↗
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -109,7 +132,7 @@ function formatLinkLabel(key: string): string {
 
   .intro-body-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-columns: minmax(0, 1fr) 280px;
     gap: 3.5rem;
     align-items: start;
     margin-bottom: 3.5rem;
@@ -154,10 +177,11 @@ function formatLinkLabel(key: string): string {
     color: var(--muted);
     margin: 0 0 1.75rem 0;
     line-height: 1.5;
+    text-wrap: balance;
   }
 
   .intro-bio {
-    max-width: 62ch;
+    max-width: var(--col-reading);
     margin-bottom: 1.75rem;
   }
 
@@ -172,12 +196,32 @@ function formatLinkLabel(key: string): string {
     margin-bottom: 0;
   }
 
-  .intro-contact {
+  .intro-photo-col {
+    width: 280px;
+    flex-shrink: 0;
+  }
+
+  .intro-portrait {
+    width: 280px;
+    height: 350px;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    display: block;
+    background: var(--paper);
+  }
+
+  /* Desktop contact list: vertical list directly under portrait */
+  .intro-contact-desktop {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1.25rem;
-    padding-top: 0.5rem;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: 20px;
+  }
+
+  .intro-contact-mobile {
+    display: none;
   }
 
   .contact-email {
@@ -186,6 +230,7 @@ function formatLinkLabel(key: string): string {
     color: var(--ink);
     text-decoration: underline;
     text-underline-offset: 3px;
+    line-height: 1.4;
     transition: color var(--transition-fast);
   }
 
@@ -203,28 +248,14 @@ function formatLinkLabel(key: string): string {
     color: var(--muted);
     text-decoration: none;
     border-bottom: 1px dotted var(--rule);
+    align-self: flex-start;
+    line-height: 1.4;
     transition: color var(--transition-fast), border-color var(--transition-fast);
   }
 
   .contact-link:hover {
     color: var(--ink);
     border-bottom-color: var(--ink);
-  }
-
-  .intro-photo-col {
-    width: 300px;
-    flex-shrink: 0;
-  }
-
-  .intro-portrait {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: 2px;
-    border: 1px solid var(--rule);
-    display: block;
-    background: var(--paper);
   }
 
   .intro-mini-timeline-wrap {
@@ -243,6 +274,23 @@ function formatLinkLabel(key: string): string {
       order: -1;
       width: 50%;
       max-width: 240px;
+    }
+
+    .intro-portrait {
+      width: 100%;
+      height: auto;
+    }
+
+    .intro-contact-desktop {
+      display: none;
+    }
+
+    .intro-contact-mobile {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.25rem;
+      padding-top: 0.5rem;
     }
 
     .intro-gutter-spacer {
