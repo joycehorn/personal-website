@@ -223,9 +223,9 @@ projects:
 # ---------------------------------------------------------------------
 lanes:
   - { id: research,     en: "Research",              pt: "Pesquisa" }
+  - { id: publications, en: "Publications",          pt: "Publicações" }
   - { id: education,    en: "Education",             pt: "Formação" }
   - { id: industry,     en: "Industry",              pt: "Indústria" }
-  - { id: publications, en: "Publications",          pt: "Publicações" }
   - { id: honors,       en: "Honors & grants",       pt: "Prêmios e financiamentos" }
   - { id: service,      en: "Service & mentoring",   pt: "Serviço e orientação" }
 
