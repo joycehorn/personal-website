@@ -526,6 +526,47 @@ const timelineConfig = {
           card.appendChild(orgEl);
         }
 
+        if (entry.isPublication && (entry.doi || entry.url || entry.pdf)) {
+          const actionsEl = document.createElement('div');
+          actionsEl.className = 'card-actions';
+
+          if (entry.doi) {
+            const doiA = document.createElement('a');
+            doiA.href = `https://doi.org/${entry.doi}`;
+            doiA.target = '_blank';
+            doiA.rel = 'noopener noreferrer';
+            doiA.className = 'card-action-link';
+            doiA.textContent = `doi:${entry.doi} ↗`;
+            doiA.onclick = (e) => e.stopPropagation();
+            doiA.onkeydown = (e) => e.stopPropagation();
+            actionsEl.appendChild(doiA);
+          } else if (entry.url) {
+            const urlA = document.createElement('a');
+            urlA.href = entry.url;
+            urlA.target = '_blank';
+            urlA.rel = 'noopener noreferrer';
+            urlA.className = 'card-action-link';
+            urlA.textContent = 'Link ↗';
+            urlA.onclick = (e) => e.stopPropagation();
+            urlA.onkeydown = (e) => e.stopPropagation();
+            actionsEl.appendChild(urlA);
+          }
+
+          if (entry.pdf && entry.pdf !== 'TODO' && entry.pdf.trim() !== '') {
+            const pdfA = document.createElement('a');
+            pdfA.href = entry.pdf;
+            pdfA.target = '_blank';
+            pdfA.rel = 'noopener noreferrer';
+            pdfA.className = 'card-action-link';
+            pdfA.textContent = 'PDF ↗';
+            pdfA.onclick = (e) => e.stopPropagation();
+            pdfA.onkeydown = (e) => e.stopPropagation();
+            actionsEl.appendChild(pdfA);
+          }
+
+          card.appendChild(actionsEl);
+        }
+
         if (isExpanded) {
           const detail = document.createElement('div');
           detail.className = 'card-detail';
@@ -950,6 +991,29 @@ const timelineConfig = {
     color: var(--muted);
     margin-top: 0.25rem;
     line-height: 1.4;
+  }
+
+  :global(.card-actions) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.45rem;
+  }
+
+  :global(.card-action-link) {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 3px;
+    transition: text-decoration-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  :global(.card-action-link:hover) {
+    text-decoration-color: var(--ink);
+    color: var(--lane-research);
   }
 
   .card-detail {

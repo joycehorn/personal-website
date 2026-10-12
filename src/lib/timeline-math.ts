@@ -37,6 +37,9 @@ export interface NormalizedTimelineEntry {
   advisor?: string;
   thesis?: string;
   summary?: string;
+  doi?: string;
+  url?: string;
+  pdf?: string;
   tags: string[];
   subRow: number; // Stacking index within lane
   totalSubRows: number;
@@ -131,6 +134,9 @@ export function buildTimelineDataset(
       venue: pub.venue,
       role: pub.authors,
       org: pub.venue,
+      doi: pub.doi,
+      url: pub.url,
+      pdf: pub.pdf,
       tags: pub.tags || [],
       subRow: 0,
       totalSubRows: 1,

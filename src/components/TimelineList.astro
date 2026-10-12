@@ -1,6 +1,6 @@
 ---
 import type { Locale, Publication } from '../lib/types';
-import { loadContent, t, getUi } from '../lib/content';
+import { loadContent, t, getUi, isTodo } from '../lib/content';
 import { formatDateRange, formatDate } from '../lib/dates';
 import { buildTimelineDataset, type NormalizedTimelineEntry } from '../lib/timeline-math';
 import Chip from './Chip.astro';
@@ -94,6 +94,41 @@ const entriesByLane = lanes.map((lane) => {
                   </h4>
 
                   {entry.org && <div class="entry-org">{entry.org}</div>}
+
+                  {entry.isPublication && (
+                    <div class="entry-actions">
+                      {entry.doi && (
+                        <a
+                          href={`https://doi.org/${entry.doi}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="pub-link doi-link"
+                        >
+                          doi:{entry.doi} ↗
+                        </a>
+                      )}
+                      {!entry.doi && entry.url && (
+                        <a
+                          href={entry.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="pub-link url-link"
+                        >
+                          Link ↗
+                        </a>
+                      )}
+                      {entry.pdf && !isTodo(entry.pdf) && (
+                        <a
+                          href={entry.pdf}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="pub-link pdf-link"
+                        >
+                          PDF ↗
+                        </a>
+                      )}
+                    </div>
+                  )}
 
                   {!entry.isPublication && entry.summary && (
                     <p class="entry-summary">{entry.summary}</p>
@@ -349,6 +384,30 @@ const entriesByLane = lanes.map((lane) => {
     flex-wrap: wrap;
     gap: 0.4rem;
     margin-top: 0.25rem;
+  }
+
+  .entry-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 0.45rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .pub-link {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 3px;
+    transition: text-decoration-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .pub-link:hover {
+    text-decoration-color: var(--ink);
+    color: var(--lane-research);
   }
 
   @media (max-width: 640px) {
