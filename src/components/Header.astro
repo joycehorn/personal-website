@@ -33,7 +33,6 @@ const switchLangText = getUi('switch_lang', locale);
     <a href={homeHref} class="header-logo-link" aria-label="Joyce Horn Fonteles, home">
       <img src="/jhf-mark-light.svg" alt="" class="logo-mark mark-light" width="46" height="30" />
       <img src="/jhf-mark-dark.svg" alt="" class="logo-mark mark-dark" width="46" height="30" />
-      <span class="logo-name">{content.meta.name}</span>
     </a>
 
     <nav class="nav-menu" aria-label="Main Navigation">
@@ -95,16 +94,8 @@ const switchLangText = getUi('switch_lang', locale);
     themeToggle.addEventListener('click', () => {
       try {
         const root = document.documentElement;
-        const currentTheme = root.getAttribute('data-theme');
-        let newTheme: 'light' | 'dark';
-
-        if (currentTheme) {
-          newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        } else {
-          // If no attribute, check prefers-color-scheme
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          newTheme = prefersDark ? 'light' : 'dark';
-        }
+        const currentTheme = root.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
         root.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
@@ -136,13 +127,12 @@ const switchLangText = getUi('switch_lang', locale);
   .header-logo-link {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
     text-decoration: none;
     color: var(--ink);
   }
 
-  .header-logo-link:hover .logo-name {
-    color: var(--muted);
+  .header-logo-link:hover .logo-mark {
+    opacity: 0.75;
   }
 
   .logo-mark {
@@ -150,6 +140,7 @@ const switchLangText = getUi('switch_lang', locale);
     width: auto;
     flex-shrink: 0;
     display: block;
+    transition: opacity var(--transition-fast);
   }
 
   /* Default / light theme */
@@ -166,22 +157,6 @@ const switchLangText = getUi('switch_lang', locale);
   }
   :global([data-theme="dark"]) .mark-dark {
     display: block;
-  }
-
-  .logo-name {
-    font-family: var(--font-display);
-    font-size: 1.05rem;
-    font-weight: 400;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    transition: color var(--transition-fast);
-  }
-
-  @media (max-width: 768px) {
-    .logo-name {
-      display: none;
-    }
   }
 
   .nav-menu {
@@ -266,14 +241,6 @@ const switchLangText = getUi('switch_lang', locale);
     display: none;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme="light"])) .sun-icon {
-      display: block;
-    }
-    :global(:root:not([data-theme="light"])) .moon-icon {
-      display: none;
-    }
-  }
 
   @media (max-width: 720px) {
     .nav-menu {
