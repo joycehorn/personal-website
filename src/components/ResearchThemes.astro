@@ -15,8 +15,13 @@ const allPubs = content.publications;
 const sectionLabel = getUi('nav_research', locale);
 const pubsHref = locale === 'pt' ? '/pt/publicacoes' : '/publications';
 
-function getKeyPapersForTheme(tag: string): Publication[] {
-  const tagged = allPubs.filter((p) => p.tags && p.tags.includes(tag));
+function getKeyPapersForTheme(theme: { id: string; tag: string; key_papers?: string[] }): Publication[] {
+  if (theme.key_papers && theme.key_papers.length > 0) {
+    return theme.key_papers
+      .map((id) => allPubs.find((p) => p.id === id))
+      .filter((p): p is Publication => Boolean(p));
+  }
+  const tagged = allPubs.filter((p) => p.tags && p.tags.includes(theme.tag));
   tagged.sort((a, b) => {
     if (a.featured && !b.featured) return -1;
     if (!a.featured && b.featured) return 1;
@@ -65,7 +70,7 @@ const musicPubs = musicProject
         <div class="themes-grid">
           {themes.map((theme, index) => {
             const themeProjects = allProjects.filter((p) => p.theme === theme.id);
-            const themePapers = getKeyPapersForTheme(theme.tag);
+            const themePapers = getKeyPapersForTheme(theme);
 
             return (
               <article class={`theme-cell theme-${theme.id}`} data-index={index}>

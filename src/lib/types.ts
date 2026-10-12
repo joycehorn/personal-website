@@ -28,6 +28,7 @@ export interface ResearchTheme {
   tag: string;
   title: LocalizedString;
   text: LocalizedString;
+  key_papers?: string[];
 }
 
 export interface Project {

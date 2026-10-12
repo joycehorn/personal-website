@@ -107,6 +107,7 @@ research_themes:
     text:
       en: "Review tools that keep the evidence next to every AI judgment, so researchers and teachers can validate it, override it, and learn from it, built on privacy-preserving pipelines where identifiable K–12 data is processed locally."
       pt: "Ferramentas de revisão que mantêm a evidência ao lado de cada julgamento da IA, para que pesquisadores e professores possam validá-lo, contestá-lo e aprender com ele, construídas sobre pipelines que preservam a privacidade, nos quais dados identificáveis da educação básica são processados localmente."
+    key_papers: [li-2026, aied-2024, icce-2024]
   - id: llm-eval
     tag: LLM_EVALUATION
     title:
@@ -708,7 +709,7 @@ publications:
     venue: "Learning and Instruction"
     doi: "10.1016/j.learninstruc.2025.102274"
     first_author: true
-    tags: [HUMAN_IN_THE_LOOP, MULTIMODAL_AI, LEARNING_ANALYTICS]
+    tags: [HUMAN_IN_THE_LOOP, MULTIMODAL_AI, LEARNING_ANALYTICS, XAI]
 
   - id: lak-2026
     year: 2026
@@ -788,7 +789,7 @@ publications:
     venue: "AIED 2024 – Artificial Intelligence in Education (LNCS)"
     doi: "10.1007/978-3-031-64299-9_1"
     first_author: true
-    tags: [HUMAN_IN_THE_LOOP, MULTIMODAL_AI]
+    tags: [HUMAN_IN_THE_LOOP, MULTIMODAL_AI, XAI]
 
   - id: idc-2024
     year: 2024

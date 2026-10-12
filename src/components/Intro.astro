@@ -1,6 +1,6 @@
 ---
 import type { Locale } from '../lib/types';
-import { loadContent, t, isTodo } from '../lib/content';
+import { loadContent, t, isTodo, getUi } from '../lib/content';
 import MiniTimeline from './MiniTimeline.astro';
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 
 const { locale } = Astro.props;
 const content = loadContent();
+const sectionLabel = getUi('nav_about', locale);
 
 const name = content.meta.name;
 const headline = t(content.headline, locale);
@@ -32,10 +33,12 @@ function formatLinkLabel(key: string): string {
 }
 ---
 
-<section class="intro-section" id="intro" aria-label="Introduction">
+<section class="intro-section" id="about" aria-labelledby="about-label">
   <div class="container">
     <div class="section-grid intro-grid">
-      <div class="intro-gutter-spacer" aria-hidden="true"></div>
+      <h2 class="section-label" id="about-label">
+        {sectionLabel}
+      </h2>
 
       <div class="section-content intro-content">
         <div class="intro-body-grid">
@@ -291,10 +294,6 @@ function formatLinkLabel(key: string): string {
       align-items: center;
       gap: 1.25rem;
       padding-top: 0.5rem;
-    }
-
-    .intro-gutter-spacer {
-      display: none;
     }
   }
 </style>
