@@ -23,7 +23,7 @@ meta:
     scholar: "https://scholar.google.com/citations?user=6QmCCGEAAAAJ"
     github: "https://github.com/joycehorn"
     linkedin: "https://www.linkedin.com/in/joyce-horn"
-    orcid: "TODO"
+    orcid: "https://orcid.org/0000-0001-9862-8960"
   portrait: "/portrait.jpg"          # optional; if the file is absent, render no image and no placeholder
 
 headline:
@@ -299,7 +299,7 @@ timeline:
   - id: bsc
     lane: education
     start: "2002-02"
-    end: "2010-07"            # VERIFY: Portuguese CV says Dec 2010
+    end: "2010-07"
     org: "Universidade de Fortaleza (UNIFOR)"
     role:
       en: "B.Sc. in Computer Science"
