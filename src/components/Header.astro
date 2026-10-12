@@ -30,13 +30,14 @@ const switchLangText = getUi('switch_lang', locale);
 
 <header class="site-header">
   <div class="container header-inner">
-    <a href={homeHref} class="wordmark">
-      {content.meta.name}
+    <a href={homeHref} class="header-logo-link" aria-label="Joyce Horn Fonteles, home">
+      <img src="/jhf-mark-light.svg" alt="" class="logo-mark mark-light" width="46" height="30" />
+      <img src="/jhf-mark-dark.svg" alt="" class="logo-mark mark-dark" width="46" height="30" />
+      <span class="logo-name">{content.meta.name}</span>
     </a>
 
     <nav class="nav-menu" aria-label="Main Navigation">
       <ul class="nav-list">
-        <li><a href={`${homeHref}#about`}>{navAbout}</a></li>
         <li><a href={`${homeHref}#research`}>{navResearch}</a></li>
         <li><a href={`${homeHref}#timeline`}>{navTimeline}</a></li>
         <li><a href={pubsHref}>{navPublications}</a></li>
@@ -132,19 +133,55 @@ const switchLangText = getUi('switch_lang', locale);
     gap: 1.5rem;
   }
 
-  .wordmark {
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: var(--ink);
+  .header-logo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
     text-decoration: none;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
+    color: var(--ink);
   }
 
-  .wordmark:hover {
-    text-decoration: none;
+  .header-logo-link:hover .logo-name {
     color: var(--muted);
+  }
+
+  .logo-mark {
+    height: 28px;
+    width: auto;
+    flex-shrink: 0;
+    display: block;
+  }
+
+  /* Default / light theme */
+  .mark-light {
+    display: block;
+  }
+  .mark-dark {
+    display: none;
+  }
+
+  /* Dark theme */
+  :global([data-theme="dark"]) .mark-light {
+    display: none;
+  }
+  :global([data-theme="dark"]) .mark-dark {
+    display: block;
+  }
+
+  .logo-name {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    transition: color var(--transition-fast);
+  }
+
+  @media (max-width: 768px) {
+    .logo-name {
+      display: none;
+    }
   }
 
   .nav-menu {

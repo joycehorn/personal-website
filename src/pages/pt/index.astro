@@ -1,20 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Hero from '../../components/Hero.astro';
-import About from '../../components/About.astro';
+import Intro from '../../components/Intro.astro';
 import ResearchThemes from '../../components/ResearchThemes.astro';
-import Projects from '../../components/Projects.astro';
 import Timeline from '../../components/Timeline.astro';
-import Bridge from '../../components/Bridge.astro';
 
 const locale = 'pt';
 ---
 
 <Base locale={locale} currentPath="/pt/">
-  <Hero locale={locale} />
-  <About locale={locale} />
+  <Intro locale={locale} />
   <ResearchThemes locale={locale} />
-  <Projects locale={locale} />
   <Timeline locale={locale} />
-  <Bridge locale={locale} />
 </Base>

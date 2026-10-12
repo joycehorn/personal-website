@@ -6,7 +6,7 @@ import type { ContentData, Locale, LocalizedString, StringOrLocalized } from './
 let cachedContent: ContentData | null = null;
 
 export function loadContent(): ContentData {
-  if (cachedContent) {
+  if (import.meta.env.PROD && cachedContent) {
     return cachedContent;
   }
 

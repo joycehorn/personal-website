@@ -16,6 +16,11 @@ const linkText = getUi('not_found_link', locale);
       </div>
 
       <div class="section-content not-found-content">
+        <div class="not-found-logo">
+          <img src="/jhf-logo-light.svg" alt="" class="logo-outlined logo-light" width="90" height="59" />
+          <img src="/jhf-logo-dark.svg" alt="" class="logo-outlined logo-dark" width="90" height="59" />
+        </div>
+
         <h1 class="error-title">{title}</h1>
 
         <div class="not-found-timeline">
@@ -38,6 +43,30 @@ const linkText = getUi('not_found_link', locale);
 
   .not-found-content {
     max-width: var(--col-reading);
+  }
+
+  .not-found-logo {
+    margin-bottom: 1.5rem;
+  }
+
+  .logo-outlined {
+    height: 48px;
+    width: auto;
+    display: block;
+  }
+
+  .logo-light {
+    display: block;
+  }
+  .logo-dark {
+    display: none;
+  }
+
+  :global([data-theme="dark"]) .logo-light {
+    display: none;
+  }
+  :global([data-theme="dark"]) .logo-dark {
+    display: block;
   }
 
   .error-title {

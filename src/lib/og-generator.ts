@@ -131,6 +131,12 @@ export async function generateOgImage(locale: Locale): Promise<Buffer> {
     },
   });
 
+  const logoSvg = fs.readFileSync(
+    path.resolve(process.cwd(), 'public/jhf-logo-light.svg'),
+    'utf8'
+  );
+  const logoBase64 = `data:image/svg+xml;base64,${Buffer.from(logoSvg).toString('base64')}`;
+
   const svg = await satori(
     {
       type: 'div',
@@ -143,7 +149,7 @@ export async function generateOgImage(locale: Locale): Promise<Buffer> {
           backgroundColor: '#F6F3EC',
           padding: '40px 60px',
           border: '1px solid #DDD7CA',
-          gap: '32px',
+          gap: '28px',
         },
         children: [
           // Header row
@@ -169,43 +175,70 @@ export async function generateOgImage(locale: Locale): Promise<Buffer> {
             },
           },
 
-          // Center identity
+          // Center identity row (Logo on left + Name & Headline)
           {
             type: 'div',
             props: {
               style: {
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '36px',
+                flex: 1,
               },
               children: [
                 {
-                  type: 'h1',
+                  type: 'img',
                   props: {
+                    src: logoBase64,
+                    width: 140,
+                    height: 91,
                     style: {
-                      fontFamily: 'Newsreader',
-                      fontSize: '56px',
-                      fontWeight: 400,
-                      color: '#1B1A17',
-                      margin: 0,
-                      lineHeight: 1.1,
-                      letterSpacing: '-0.02em',
+                      width: '140px',
+                      height: '91px',
+                      flexShrink: 0,
                     },
-                    children: 'Joyce Horn Fonteles',
                   },
                 },
                 {
-                  type: 'p',
+                  type: 'div',
                   props: {
                     style: {
-                      fontFamily: 'IBM Plex Sans',
-                      fontSize: '20px',
-                      color: '#6B675E',
-                      lineHeight: 1.45,
-                      margin: 0,
-                      maxWidth: '960px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
                     },
-                    children: headline,
+                    children: [
+                      {
+                        type: 'h1',
+                        props: {
+                          style: {
+                            fontFamily: 'Newsreader',
+                            fontSize: '52px',
+                            fontWeight: 400,
+                            color: '#1B1A17',
+                            margin: 0,
+                            lineHeight: 1.1,
+                            letterSpacing: '-0.02em',
+                          },
+                          children: 'Joyce Horn Fonteles',
+                        },
+                      },
+                      {
+                        type: 'p',
+                        props: {
+                          style: {
+                            fontFamily: 'IBM Plex Sans',
+                            fontSize: '19px',
+                            color: '#6B675E',
+                            lineHeight: 1.45,
+                            margin: 0,
+                            maxWidth: '780px',
+                          },
+                          children: headline,
+                        },
+                      },
+                    ],
                   },
                 },
               ],

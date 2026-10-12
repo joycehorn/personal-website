@@ -1,0 +1,252 @@
+---
+import type { Locale } from '../lib/types';
+import { loadContent, t, isTodo } from '../lib/content';
+import MiniTimeline from './MiniTimeline.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = loadContent();
+
+const name = content.meta.name;
+const headline = t(content.headline, locale);
+const now = t(content.now, locale);
+const affiliation = content.affiliation ? t(content.affiliation, locale) : '';
+const email = content.meta.email;
+
+const aboutText = t(content.about, locale);
+const aboutParagraphs = aboutText.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+
+const links = content.meta.links;
+const activeLinks = Object.entries(links).filter(([_, url]) => !isTodo(url));
+
+function formatLinkLabel(key: string): string {
+  if (key === 'scholar') return 'Google Scholar';
+  if (key === 'github') return 'GitHub';
+  if (key === 'linkedin') return 'LinkedIn';
+  if (key === 'orcid') return 'ORCID';
+  return key.charAt(0).toUpperCase() + key.slice(1);
+}
+---
+
+<section class="intro-section" id="intro" aria-label="Introduction">
+  <div class="container">
+    <div class="section-grid intro-grid">
+      <div class="intro-gutter-spacer" aria-hidden="true"></div>
+
+      <div class="section-content intro-content">
+        <div class="intro-body-grid">
+          <div class="intro-text-col">
+            <h1 class="intro-name">{name}</h1>
+            <p class="intro-headline">{headline}</p>
+
+            <p class="intro-now">{now}</p>
+
+            {affiliation && (
+              <p class="intro-affiliation">{affiliation}</p>
+            )}
+
+            <div class="intro-bio">
+              {aboutParagraphs.map((para) => (
+                <p class="intro-p">{para}</p>
+              ))}
+            </div>
+
+            <div class="intro-contact">
+              <a href={`mailto:${email}`} class="contact-email">
+                <span class="email-label">email:</span> {email}
+              </a>
+
+              {activeLinks.map(([key, url]) => (
+                <a href={url} target="_blank" rel="noopener noreferrer" class="contact-link">
+                  {formatLinkLabel(key)} ↗
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div class="intro-photo-col">
+            <picture>
+              <source srcset="/portrait.webp" type="image/webp" />
+              <img
+                src="/portrait.jpg"
+                alt="Joyce Horn Fonteles"
+                class="intro-portrait"
+                width="300"
+                height="375"
+                loading="eager"
+                decoding="async"
+              />
+            </picture>
+          </div>
+        </div>
+
+        <div class="intro-mini-timeline-wrap">
+          <MiniTimeline locale={locale} />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .intro-section {
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .intro-grid {
+    border-top: none;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .intro-content {
+    width: 100%;
+  }
+
+  .intro-body-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 3.5rem;
+    align-items: start;
+    margin-bottom: 3.5rem;
+  }
+
+  .intro-text-col {
+    min-width: 0;
+  }
+
+  .intro-name {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 4.2vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0 0 1rem 0;
+  }
+
+  .intro-headline {
+    font-family: var(--font-body);
+    font-size: 1.25rem;
+    line-height: 1.45;
+    color: var(--ink);
+    margin: 0 0 1.25rem 0;
+    max-width: var(--col-reading);
+  }
+
+  .intro-now {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    margin: 0 0 0.35rem 0;
+    line-height: 1.5;
+  }
+
+  .intro-affiliation {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--muted);
+    margin: 0 0 1.75rem 0;
+    line-height: 1.5;
+  }
+
+  .intro-bio {
+    max-width: 62ch;
+    margin-bottom: 1.75rem;
+  }
+
+  .intro-p {
+    font-size: var(--text-base);
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 1.15rem;
+  }
+
+  .intro-p:last-child {
+    margin-bottom: 0;
+  }
+
+  .intro-contact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+    padding-top: 0.5rem;
+  }
+
+  .contact-email {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color var(--transition-fast);
+  }
+
+  .contact-email:hover {
+    color: var(--lane-research);
+  }
+
+  .email-label {
+    color: var(--muted);
+  }
+
+  .contact-link {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--rule);
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .contact-link:hover {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+  }
+
+  .intro-photo-col {
+    width: 300px;
+    flex-shrink: 0;
+  }
+
+  .intro-portrait {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    display: block;
+    background: var(--paper);
+  }
+
+  .intro-mini-timeline-wrap {
+    width: 100%;
+  }
+
+  @media (max-width: 899px) {
+    .intro-body-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .intro-photo-col {
+      order: -1;
+      width: 50%;
+      max-width: 240px;
+    }
+
+    .intro-gutter-spacer {
+      display: none;
+    }
+  }
+</style>

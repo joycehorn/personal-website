@@ -1,5 +1,5 @@
 ---
-import type { Locale } from '../lib/types';
+import type { Locale, Publication, Project } from '../lib/types';
 import { loadContent, t, getUi } from '../lib/content';
 import Chip from './Chip.astro';
 
@@ -10,7 +10,48 @@ interface Props {
 const { locale } = Astro.props;
 const content = loadContent();
 const themes = content.research_themes;
+const allProjects = content.projects;
+const allPubs = content.publications;
 const sectionLabel = getUi('nav_research', locale);
+const pubsHref = locale === 'pt' ? '/pt/publicacoes' : '/publications';
+
+function getKeyPapersForTheme(tag: string): Publication[] {
+  const tagged = allPubs.filter((p) => p.tags && p.tags.includes(tag));
+  tagged.sort((a, b) => {
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+    if (a.first_author && !b.first_author) return -1;
+    if (!a.first_author && b.first_author) return 1;
+    return b.year - a.year;
+  });
+  return tagged.slice(0, 2);
+}
+
+function getShortVenue(venue: string): string {
+  const dashIdx = venue.indexOf(' – ');
+  if (dashIdx !== -1) return venue.substring(0, dashIdx).trim();
+  const hyphenIdx = venue.indexOf(' - ');
+  if (hyphenIdx !== -1) return venue.substring(0, hyphenIdx).trim();
+  return venue;
+}
+
+function getPubLabel(pub: Publication): string {
+  const shortVenue = getShortVenue(pub.venue);
+  if (pub.status) {
+    const statusStr = t(pub.status, locale);
+    return `${shortVenue} · ${statusStr}`;
+  }
+  if (shortVenue.includes(String(pub.year))) {
+    return shortVenue;
+  }
+  return `${shortVenue} ${pub.year}`;
+}
+
+const earlierProjects = allProjects.filter((p) => p.theme === 'earlier');
+const musicProject = earlierProjects[0] || allProjects.find((p) => p.id === 'music');
+const musicPubs = musicProject
+  ? allPubs.filter((pub) => musicProject.publications && musicProject.publications.includes(pub.id))
+  : [];
 ---
 
 <section id="research" class="research-section" aria-labelledby="research-label">
@@ -22,16 +63,94 @@ const sectionLabel = getUi('nav_research', locale);
 
       <div class="section-content">
         <div class="themes-grid">
-          {themes.map((theme, index) => (
-            <article class={`theme-cell theme-${theme.id}`} data-index={index}>
-              <div class="theme-chip-wrap">
-                <Chip tag={theme.tag} locale={locale} />
-              </div>
-              <h3 class="theme-title">{t(theme.title, locale)}</h3>
-              <p class="theme-text">{t(theme.text, locale)}</p>
-            </article>
-          ))}
+          {themes.map((theme, index) => {
+            const themeProjects = allProjects.filter((p) => p.theme === theme.id);
+            const themePapers = getKeyPapersForTheme(theme.tag);
+
+            return (
+              <article class={`theme-cell theme-${theme.id}`} data-index={index}>
+                <div class="theme-chip-wrap">
+                  <Chip tag={theme.tag} locale={locale} />
+                </div>
+
+                <h3 class="theme-title">{t(theme.title, locale)}</h3>
+                <p class="theme-text">{t(theme.text, locale)}</p>
+
+                {themeProjects.length > 0 && (
+                  <div class="theme-projects-group">
+                    <div class="theme-subheading">{locale === 'pt' ? 'Projetos' : 'Projects'}</div>
+                    <div class="theme-projects-list">
+                      {themeProjects.map((proj) => (
+                        <details class="theme-project-details">
+                          <summary class="theme-project-summary">
+                            <span class="project-title">{t(proj.title, locale)}</span>
+                            <span class="project-meta-line">
+                              <span class="project-period">{t(proj.period, locale)}</span>
+                              <span class="project-arrow" aria-hidden="true">↓</span>
+                            </span>
+                          </summary>
+                          <div class="project-drawer">
+                            <p class="project-desc">{t(proj.summary, locale)}</p>
+                          </div>
+                        </details>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {themePapers.length > 0 && (
+                  <div class="theme-papers-group">
+                    <div class="theme-subheading">{locale === 'pt' ? 'Publicações-chave' : 'Key papers'}</div>
+                    <div class="theme-papers-list">
+                      {themePapers.map((pub) => (
+                        <a
+                          href={pub.doi ? `https://doi.org/${pub.doi}` : pub.url || `${pubsHref}#${pub.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="theme-paper-link"
+                        >
+                          {getPubLabel(pub)} ↗
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </article>
+            );
+          })}
         </div>
+
+        {musicProject && (
+          <div class="earlier-work-row">
+            <details class="earlier-work-details">
+              <summary class="earlier-work-summary">
+                <span class="earlier-prefix">{locale === 'pt' ? 'Trabalhos anteriores:' : 'Earlier work:'}</span>
+                <span class="earlier-title">{t(musicProject.title, locale)} ({t(musicProject.period, locale)})</span>
+                <span class="earlier-arrow" aria-hidden="true">→</span>
+              </summary>
+              <div class="earlier-work-drawer">
+                <p class="earlier-desc">{t(musicProject.summary, locale)}</p>
+                {musicPubs.length > 0 && (
+                  <div class="earlier-pubs-block">
+                    <span class="earlier-pubs-label">{locale === 'pt' ? 'Publicações:' : 'Publications:'}</span>
+                    <div class="earlier-pub-links">
+                      {musicPubs.map((pub) => (
+                        <a
+                          href={pub.doi ? `https://doi.org/${pub.doi}` : pub.url || `${pubsHref}#${pub.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="theme-paper-link"
+                        >
+                          {getPubLabel(pub)} ↗
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </details>
+          </div>
+        )}
       </div>
     </div>
   </div>
@@ -61,11 +180,11 @@ const sectionLabel = getUi('nav_research', locale);
 
   .theme-title {
     font-family: var(--font-display);
-    font-size: clamp(1.3rem, 1.8vw, 1.55rem);
+    font-size: 1.35rem;
     font-weight: 400;
     line-height: 1.25;
     color: var(--ink);
-    margin-bottom: 1rem;
+    margin-bottom: 0.85rem;
     letter-spacing: -0.01em;
   }
 
@@ -74,7 +193,207 @@ const sectionLabel = getUi('nav_research', locale);
     font-size: var(--text-base);
     line-height: 1.6;
     color: var(--muted);
-    margin-bottom: 0;
+    margin-bottom: 1rem;
+  }
+
+  .theme-subheading {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .theme-projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .theme-project-details {
+    border-bottom: 1px dotted var(--rule);
+    padding-bottom: 0.35rem;
+  }
+
+  .theme-project-details summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .theme-project-details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .theme-project-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .project-title {
+    color: var(--ink);
+    font-weight: 500;
+    font-family: var(--font-body);
+    transition: color var(--transition-fast);
+  }
+
+  .theme-project-summary:hover .project-title {
+    color: var(--lane-research);
+  }
+
+  .project-meta-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .project-period {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .project-arrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    transition: transform var(--transition-fast);
+  }
+
+  details[open] .project-arrow {
+    transform: rotate(180deg);
+  }
+
+  .project-drawer {
+    padding-top: 0.5rem;
+    padding-bottom: 0.4rem;
+    padding-left: 0.65rem;
+    border-left: 2px solid var(--rule);
+    margin-top: 0.4rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .project-desc {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .theme-papers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .theme-paper-link {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--rule);
+    align-self: flex-start;
+    line-height: 1.4;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .theme-paper-link:hover {
+    color: var(--lane-research);
+    border-bottom-color: var(--lane-research);
+  }
+
+  /* Earlier work row below 2x2 grid */
+  .earlier-work-row {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .earlier-work-details summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .earlier-work-details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .earlier-work-summary {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+    transition: color var(--transition-fast);
+  }
+
+  .earlier-work-summary:hover {
+    color: var(--ink);
+  }
+
+  .earlier-prefix {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .earlier-title {
+    font-family: var(--font-body);
+    color: var(--ink);
+  }
+
+  .earlier-arrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    transition: transform var(--transition-fast);
+  }
+
+  details[open] .earlier-arrow {
+    transform: rotate(90deg);
+  }
+
+  .earlier-work-drawer {
+    margin-top: 0.85rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--rule);
+    max-width: var(--col-reading);
+  }
+
+  .earlier-desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--muted);
+    margin-bottom: 0.85rem;
+  }
+
+  .earlier-pubs-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .earlier-pubs-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  .earlier-pub-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
   }
 
   @media (max-width: 768px) {
@@ -85,13 +404,18 @@ const sectionLabel = getUi('nav_research', locale);
     }
 
     .theme-cell {
-      padding: 1.75rem 0;
+      padding: 2rem 0;
       border-right: none;
       border-bottom: 1px solid var(--rule);
     }
 
     .theme-cell:first-child {
       border-top: 1px solid var(--rule);
+    }
+
+    .theme-project-summary {
+      flex-direction: column;
+      gap: 0.2rem;
     }
   }
 </style>

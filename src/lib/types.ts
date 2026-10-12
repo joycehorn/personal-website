@@ -32,6 +32,7 @@ export interface ResearchTheme {
 
 export interface Project {
   id: string;
+  theme?: string;
   featured: boolean;
   period: StringOrLocalized;
   title: LocalizedString;
@@ -88,6 +89,7 @@ export interface ContentData {
   meta: MetaData;
   headline: LocalizedString;
   now: LocalizedString;
+  affiliation?: LocalizedString;
   about: LocalizedString;
   bridge: {
     title: LocalizedString;

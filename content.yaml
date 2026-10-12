@@ -30,9 +30,12 @@ headline:
   en: "Multimodal AI and human–AI collaboration for understanding how people learn together."
   pt: "IA multimodal e colaboração humano–IA para compreender como as pessoas aprendem juntas."
 
-now:
-  en: "PhD candidate in Computer Science, Vanderbilt University · Defending spring 2027 · Open to postdoctoral positions"
-  pt: "Doutoranda em Ciência da Computação, Vanderbilt University · Defesa prevista para o 1º semestre de 2027 · Aberta a posições de pós-doutorado"
+now:   # the "range" line under the headline: roles, not status
+  en: "AI researcher · software architect · database lead · product owner · educator"
+  pt: "Pesquisadora em IA · arquiteta de software · líder de banco de dados · product owner · educadora"
+affiliation:
+  en: "PhD candidate in Computer Science, Vanderbilt University · NSF EngageAI Institute"
+  pt: "Doutoranda em Ciência da Computação, Vanderbilt University · NSF EngageAI Institute"
 
 about:
   en: |
@@ -48,7 +51,7 @@ about:
 
     Antes da pesquisa, passei quinze anos na indústria: arquitetando plataformas de saúde e do setor financeiro, liderando as equipes de desenvolvimento e de banco de dados por trás de mais de 60 sistemas do Tribunal de Justiça do Pará e capacitando os servidores que levaram esse tribunal do papel ao digital. Essa trajetória molda a forma como pesquiso: me importo com dados que se sustentam em produção e com ferramentas que pessoas reais de fato adotam.
 
-bridge:   # short block shown beside the Industry lane / "From production to research"
+bridge:   # NOT RENDERED (merged into the intro); kept for reference
   title:
     en: "From production systems to research"
     pt: "Dos sistemas em produção à pesquisa"
@@ -126,6 +129,7 @@ research_themes:
 # ---------------------------------------------------------------------
 projects:
   - id: ai-timeline
+    theme: interfaces
     featured: true
     period:
       en: "2023 – present"
@@ -141,6 +145,7 @@ projects:
     publications: [icce-2024, aied-2024, li-2026]
 
   - id: gem-step
+    theme: partnership
     featured: true
     period:
       en: "2022 – present"
@@ -159,6 +164,7 @@ projects:
     publications: [aied-2026, li-2026, edm-mmla-2025, bjet-review]
 
   - id: llm-eval
+    theme: llm-eval
     featured: true
     period:
       en: "2025 – 2026"
@@ -174,6 +180,7 @@ projects:
     publications: [lak-2026, lak-2027]
 
   - id: haifa
+    theme: partnership
     featured: true
     period:
       en: "2024 – present"
@@ -192,6 +199,7 @@ projects:
     publications: [lid-recode]
 
   - id: music
+    theme: earlier
     featured: false
     period:
       en: "2008 – 2021"
