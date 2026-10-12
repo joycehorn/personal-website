@@ -99,22 +99,6 @@ research_themes:
     text:
       en: "A framework for interpreting learning behaviors from classroom recordings in which AI models propose interpretations, experts verify and correct them, and authority, labor, and inspectable evidence are allocated across every stage of the analysis pipeline."
       pt: "Um framework para interpretar comportamentos de aprendizagem a partir de gravações de sala de aula, no qual modelos de IA propõem interpretações, especialistas as verificam e corrigem, e autoridade, trabalho e evidências inspecionáveis são distribuídos entre todas as etapas do pipeline de análise."
-  - id: validity
-    tag: VALIDITY
-    title:
-      en: "Evidence that travels with every result"
-      pt: "Evidências que acompanham cada resultado"
-    text:
-      en: "Validity, reliability, reproducibility, and uncertainty evidence carried through each pipeline stage, so that a questionable interpretation can be traced to the step that produced it, and experts' trust in the analysis can be measured rather than assumed."
-      pt: "Evidências de validade, confiabilidade, reprodutibilidade e incerteza carregadas por cada etapa do pipeline, para que uma interpretação questionável possa ser rastreada até a etapa que a produziu e a confiança dos especialistas na análise seja medida, e não presumida."
-  - id: llm-eval
-    tag: LLM_EVALUATION
-    title:
-      en: "Knowing when to trust an LLM's reading"
-      pt: "Saber quando confiar na leitura de um LLM"
-    text:
-      en: "Methods for evaluating LLMs and vision-language models as qualitative analysts of multimodal classroom data: where they agree with expert coders, where they diverge, and how evaluation design changes the answer."
-      pt: "Métodos para avaliar LLMs e modelos de visão e linguagem como analistas qualitativos de dados multimodais de sala de aula: onde concordam com codificadores especialistas, onde divergem e como o desenho da avaliação muda a resposta."
   - id: interfaces
     tag: XAI
     title:
@@ -123,6 +107,22 @@ research_themes:
     text:
       en: "Review tools that keep the evidence next to every AI judgment, so researchers and teachers can validate it, override it, and learn from it, built on privacy-preserving pipelines where identifiable K–12 data is processed locally."
       pt: "Ferramentas de revisão que mantêm a evidência ao lado de cada julgamento da IA, para que pesquisadores e professores possam validá-lo, contestá-lo e aprender com ele, construídas sobre pipelines que preservam a privacidade, nos quais dados identificáveis da educação básica são processados localmente."
+  - id: llm-eval
+    tag: LLM_EVALUATION
+    title:
+      en: "Knowing when to trust an LLM's reading"
+      pt: "Saber quando confiar na leitura de um LLM"
+    text:
+      en: "Methods for evaluating LLMs and vision-language models as qualitative analysts of multimodal classroom data: where they agree with expert coders, where they diverge, and how evaluation design changes the answer."
+      pt: "Métodos para avaliar LLMs e modelos de visão e linguagem como analistas qualitativos de dados multimodais de sala de aula: onde concordam com codificadores especialistas, onde divergem e como o desenho da avaliação muda a resposta."
+  - id: validity
+    tag: VALIDITY
+    title:
+      en: "Evidence that travels with every result"
+      pt: "Evidências que acompanham cada resultado"
+    text:
+      en: "Validity, reliability, reproducibility, and uncertainty evidence carried through each pipeline stage, so that a questionable interpretation can be traced to the step that produced it, and experts' trust in the analysis can be measured rather than assumed."
+      pt: "Evidências de validade, confiabilidade, reprodutibilidade e incerteza carregadas por cada etapa do pipeline, para que uma interpretação questionável possa ser rastreada até a etapa que a produziu e a confiança dos especialistas na análise seja medida, e não presumida."
 
 # ---------------------------------------------------------------------
 # Projects
