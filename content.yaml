@@ -709,6 +709,7 @@ publications:
     authors: "Fonteles, J.H., Cohn, C., Ayalon, E., Zhou, M., Ashwin, T.S., Davalos, E., Li, Z., Rayala, S., Mereddy, D., Coursey, A., Jain, S., Zhang, Y., Enyedy, N., Danish, J., & Biswas, G."
     venue: "Learning and Instruction"
     doi: "10.1016/j.learninstruc.2025.102274"
+    url: "https://doi.org/10.1016/j.learninstruc.2025.102274"
     first_author: true
     tags: [HUMAN_IN_THE_LOOP, MULTIMODAL_AI, LEARNING_ANALYTICS, XAI]
 
@@ -720,6 +721,7 @@ publications:
     authors: "Fonteles, J.H., Sivakumaran, N., Cohn, C., Coursey, A., Yu, S., Stengel-Eskin, E., Ashwin, T.S., Bansal, M., & Biswas, G."
     venue: "LAK 2026 – International Learning Analytics and Knowledge Conference"
     doi: "10.1145/3785022.3785109"
+    url: "https://doi.org/10.1145/3785022.3785109"
     first_author: true
     tags: [LLM_EVALUATION, MULTIMODAL_AI]
 
@@ -731,6 +733,7 @@ publications:
     authors: "Cohn, C., Rayala, S., Srivastava, N., Fonteles, J.H., Jain, S., Luo, X., Mereddy, D., Mohammed, N., & Biswas, G."
     venue: "AAAI 2026 – Proceedings of the AAAI Conference on Artificial Intelligence"
     doi: "10.1609/aaai.v40i3.37154"
+    url: "https://doi.org/10.1609/aaai.v40i3.37154"
     tags: [AGENTS, LLMS]
 
   - id: edm-mmla-2025
@@ -751,6 +754,7 @@ publications:
     authors: "Cohn, C., Fonteles, J.H., Snyder, C., Srivastava, N., Ashwin, T.S., Campbell, D., Montenegro, J., & Biswas, G."
     venue: "CSCL 2025 – International Conference on Computer-Supported Collaborative Learning"
     doi: "10.22318/cscl2025.380628"
+    url: "https://doi.org/10.22318/cscl2025.380628"
     tags: [AGENTS, COLLABORATION]
 
   - id: icls-2025
@@ -760,6 +764,7 @@ publications:
     authors: "Zhou, M., Danish, J., Fonteles, J.H., Davalos, E., Dim, E., Lane, A.C., Ashwin, T.S., Srivastava, N., Steinberg, S., Anton, G., Enyedy, N., & Biswas, G."
     venue: "ICLS 2025 – International Conference of the Learning Sciences"
     doi: "10.22318/icls2025.510113"
+    url: "https://doi.org/10.22318/icls2025.510113"
     tags: [HUMAN_IN_THE_LOOP]
 
   - id: lid-2025
@@ -769,6 +774,7 @@ publications:
     authors: "Snyder, C., Cohn, C., Fonteles, J.H., & Biswas, G."
     venue: "Learning and Individual Differences"
     doi: "10.1016/j.lindif.2025.102724"
+    url: "https://doi.org/10.1016/j.lindif.2025.102724"
     tags: [COLLABORATION, LEARNING_ANALYTICS]
 
   - id: icce-2024
@@ -779,6 +785,7 @@ publications:
     authors: "Fonteles, J.H., Srivastava, N., Davalos, E., Ashwin, T.S., & Biswas, G."
     venue: "ICCE 2024 – 32nd International Conference on Computers in Education"
     doi: "10.58459/icce.2024.4907"
+    url: "https://doi.org/10.58459/icce.2024.4907"
     first_author: true
     tags: [XAI, VISUALIZATION, HUMAN_IN_THE_LOOP]
 
@@ -789,6 +796,7 @@ publications:
     authors: "Fonteles, J.H., Davalos, E., Ashwin, T.S., Zhang, Y., Zhou, M., Ayalon, E., Lane, A.C., Steinberg, S., Anton, G., Danish, J., Enyedy, N., & Biswas, G."
     venue: "AIED 2024 – Artificial Intelligence in Education (LNCS)"
     doi: "10.1007/978-3-031-64299-9_1"
+    url: "https://doi.org/10.1007/978-3-031-64299-9_1"
     first_author: true
     tags: [HUMAN_IN_THE_LOOP, MULTIMODAL_AI, XAI]
 
@@ -799,6 +807,7 @@ publications:
     authors: "Fonteles, J.H., Akpanoko, C., Wisniewski, P., & Biswas, G."
     venue: "IDC 2024 – 23rd ACM Interaction Design and Children Conference"
     doi: "10.1145/3628516.3655753"
+    url: "https://doi.org/10.1145/3628516.3655753"
     first_author: true
     tags: [HCI]
 
@@ -809,6 +818,7 @@ publications:
     authors: "Zhou, M., Fonteles, J.H., Danish, J., Davalos, E., Steinberg, S., Biswas, G., & Enyedy, N."
     venue: "ICLS 2024 – International Conference of the Learning Sciences"
     doi: "10.22318/icls2024.926221"
+    url: "https://doi.org/10.22318/icls2024.926221"
     tags: [HUMAN_IN_THE_LOOP]
 
   - id: bjet-2025
@@ -819,6 +829,7 @@ publications:
     authors: "Cohn, C., Snyder, C., Fonteles, J.H., Ashwin, T.S., Montenegro, J., & Biswas, G."
     venue: "British Journal of Educational Technology"
     doi: "10.1111/bjet.13518"
+    url: "https://doi.org/10.1111/bjet.13518"
     tags: [MULTIMODAL_AI, COLLABORATION]
 
   - id: icmi-2024
@@ -828,6 +839,7 @@ publications:
     authors: "Davalos, E., Zhang, Y., Ashwin, T.S., Fonteles, J.H., Timalsina, U., & Biswas, G."
     venue: "ICMI Companion '24 – 26th International Conference on Multimodal Interaction"
     doi: "10.1145/3686215.3688380"
+    url: "https://doi.org/10.1145/3686215.3688380"
     tags: [COMPUTER_VISION, COLLABORATION]
 
   - id: under-review-slr
@@ -847,6 +859,7 @@ publications:
     authors: "Snyder, C., Hutchins, N.M., Cohn, C., Fonteles, J.H., & Biswas, G."
     venue: "LAK 2024 – 14th Learning Analytics and Knowledge Conference"
     doi: "10.1145/3636555.3636912"
+    url: "https://doi.org/10.1145/3636555.3636912"
     tags: [COLLABORATION, LEARNING_ANALYTICS]
 
   - id: bigdata-2023
@@ -856,6 +869,7 @@ publications:
     authors: "Davalos, E., Timalsina, U., Zhang, Y., Wu, J., Fonteles, J.H., & Biswas, G."
     venue: "IEEE BigData 2023 – IEEE International Conference on Big Data"
     doi: "10.1109/BigData59044.2023.10386382"
+    url: "https://doi.org/10.1109/BigData59044.2023.10386382"
     tags: [DATA_INFRASTRUCTURE, MULTIMODAL_AI]
 
   - id: lak-2023
@@ -865,6 +879,7 @@ publications:
     authors: "Davalos, E., Vatral, C., Cohn, C., Fonteles, J.H., Biswas, G., Mohammed, N., et al."
     venue: "LAK23 – 13th International Learning Analytics and Knowledge Conference"
     doi: "10.1145/3576050.3576117"
+    url: "https://doi.org/10.1145/3576050.3576117"
     tags: [COMPUTER_VISION, LEARNING_ANALYTICS]
 
   - id: entcom-2021
@@ -874,6 +889,7 @@ publications:
     authors: "Fonteles, J.H., & Rodrigues, M.A.F."
     venue: "Entertainment Computing"
     doi: "10.1016/j.entcom.2020.100399"
+    url: "https://doi.org/10.1016/j.entcom.2020.100399"
     first_author: true
     tags: [HCI, MUSIC_COMPUTING]
 
@@ -884,6 +900,7 @@ publications:
     authors: "Fonteles, J.H., Serpa, Y.R., Barbosa, R.G., Rodrigues, M.A.F., & Alves, M.S."
     venue: "IEEE SeGAH 2018 – 6th International Conference on Serious Games and Applications for Health"
     doi: "10.1109/SeGAH.2018.8401367"
+    url: "https://doi.org/10.1109/SeGAH.2018.8401367"
     first_author: true
     tags: [HCI, ACCESSIBILITY, MUSIC_COMPUTING]
 
@@ -897,6 +914,7 @@ publications:
     authors: "Fonteles, J.H., Fernandes, M.S.S., Queiroz, D.L., & Rodrigues, M.A.F."
     venue: "SVR 2017 – 19th Symposium on Virtual and Augmented Reality"
     doi: "10.1109/SVR.2017.41"
+    url: "https://doi.org/10.1109/SVR.2017.41"
     first_author: true
     tags: [HCI, MUSIC_COMPUTING]
 
@@ -907,6 +925,7 @@ publications:
     authors: "Fonteles, J.H., Sousa, E.S., & Rodrigues, M.A.F."
     venue: "Journal on Interactive Systems"
     doi: "10.5753/jis.2015.660"
+    url: "https://doi.org/10.5753/jis.2015.660"
     first_author: true
     tags: [HCI, MUSIC_COMPUTING, GRAPHICS]
 
@@ -917,6 +936,7 @@ publications:
     authors: "Fonteles, J.H., Sousa, E.S., & Rodrigues, M.A.F."
     venue: "SVR 2015 – XVII Symposium on Virtual and Augmented Reality"
     doi: "10.1109/SVR.2015.43"
+    url: "https://doi.org/10.1109/SVR.2015.43"
     first_author: true
     tags: [GRAPHICS, MUSIC_COMPUTING]
 
@@ -927,6 +947,7 @@ publications:
     authors: "Oliveira, F., Sales, M.P., Fonteles, J.H., Silva, N., Pereira, F., Melo, J., Cavalcante, I., & Moraes, L."
     venue: "XV Workshop de Informática Médica – XXXV Congresso da Sociedade Brasileira de Computação"
     doi: "10.5753/sbcas.2015.10377"
+    url: "https://doi.org/10.5753/sbcas.2015.10377"
     tags: [HCI]
 
   - id: svr-2014
@@ -936,6 +957,7 @@ publications:
     authors: "Fonteles, J.H., Rodrigues, M.A.F., & Basso, V.E."
     venue: "SVR 2014 – XVI Symposium on Virtual and Augmented Reality"
     doi: "10.1109/SVR.2014.35"
+    url: "https://doi.org/10.1109/SVR.2014.35"
     first_author: true
     tags: [GRAPHICS, MUSIC_COMPUTING]
 
@@ -946,6 +968,7 @@ publications:
     authors: "Fonteles, J.H., Rodrigues, M.A.F., & Basso, V.E."
     venue: "Journal of Visual Languages & Computing"
     doi: "10.1016/j.jvlc.2013.10.002"
+    url: "https://doi.org/10.1016/j.jvlc.2013.10.002"
     first_author: true
     tags: [GRAPHICS, VISUALIZATION, MUSIC_COMPUTING]
 

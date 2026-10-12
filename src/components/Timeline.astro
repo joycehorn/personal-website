@@ -514,7 +514,24 @@ const timelineConfig = {
         // Title: consistent font style and size for both publications and career entries
         const roleTitle = document.createElement('h4');
         roleTitle.className = 'card-title';
-        roleTitle.textContent = entry.isPublication ? (entry.title || '') : (entry.role || entry.title || '');
+        if (entry.isPublication) {
+          const paperUrl = entry.doi ? `https://doi.org/${entry.doi}` : entry.url;
+          if (paperUrl) {
+            const titleA = document.createElement('a');
+            titleA.href = paperUrl;
+            titleA.target = '_blank';
+            titleA.rel = 'noopener noreferrer';
+            titleA.className = 'card-title-link';
+            titleA.textContent = entry.title || '';
+            titleA.onclick = (e) => e.stopPropagation();
+            titleA.onkeydown = (e) => e.stopPropagation();
+            roleTitle.appendChild(titleA);
+          } else {
+            roleTitle.textContent = entry.title || '';
+          }
+        } else {
+          roleTitle.textContent = entry.role || entry.title || '';
+        }
         card.appendChild(roleTitle);
 
         // Org / Venue: consistent font style and size
@@ -983,6 +1000,19 @@ const timelineConfig = {
     color: var(--ink);
     line-height: 1.35;
     margin: 0;
+  }
+
+  :global(.card-title-link) {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
+  }
+
+  :global(.card-title-link:hover) {
+    color: var(--lane-research);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--lane-research);
   }
 
   .card-org {
